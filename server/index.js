@@ -20,16 +20,24 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
+const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app', 'http://localhost:5173'];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this origin doesn't allow access from the particular origin.`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
-const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app',"http://localhost:5173"];
-app.use(
-  cors({
-    credentials: true,
-    origin: allowedOrigins,
-  })
-);
 
 
 async function uploadToS3(path, originalFilename, mimetype) {
