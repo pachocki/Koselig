@@ -15,7 +15,7 @@ import SinglePage from "./Pages/SinglePage";
 import SingleBooking from "./Pages/SingleBooking";
 import Destinations from "./Pages/Destinations";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL 
 axios.defaults.withCredentials = true;
 function App() {
   return (
