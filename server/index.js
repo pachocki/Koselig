@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // Define a whitelist of allowed origins
-const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app'];
+const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app' ,"*"];
 
 // Allow requests from the whitelisted origins
 app.use(cors({ origin: allowedOrigins , credentials: true }));
