@@ -30,14 +30,18 @@ const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.
 
 // Allow requests from the whitelisted origins
 app.use(cors({ origin: allowedOrigins , credentials: true }));
+
+// Set CORS headers for all routes
 app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', allowedOrigins);
+  const { origin } = req.headers;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.header('Access-Control-Allow-Credentials', true);
   next();
 });
-
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
     region: "us-east-1",
@@ -94,7 +98,7 @@ app.post("/api/register", async (req, res) => {
     res.status(422).json(e);
   }
 });
-app.options('/api/login', cors({ origin: allowedOrigins , credentials: true }));
+
 //login
 app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
