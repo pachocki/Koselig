@@ -30,7 +30,7 @@ const Login = () => {
       if (data && data._id) {
         setIsAuthenticated(true);
         navigate("/");
-        location.reload();
+       
       } else {
         setErrMsg("Login Failed");
         errRef.current.focus();
