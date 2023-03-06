@@ -26,7 +26,7 @@ app.use(cookieParser());
 const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app', "http://localhost:5173"];
 app.use(
   cors({
-    credentials: true,
+ 
     origin: allowedOrigins,
   })
 );
