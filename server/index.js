@@ -25,17 +25,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-// Set up CORS middleware
-app.use(cors({ credentials: true }));
+// Define a whitelist of allowed origins
+const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app'];
 
-// Add a middleware function to set the Access-Control-Allow-Origin header
-app.use((req, res, next) => {
-  const origin = req.get('origin');
-  if (origin && allowedOrigins.indexOf(origin) !== -1) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  next();
-});
+// Allow requests from the whitelisted origins
+app.use(cors({ origin: allowedOrigins , credentials: true }));
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
