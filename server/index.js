@@ -26,14 +26,14 @@ app.use(cookieParser());
 app.use(cors());
 
 // Define allowed origins for the API
-const allowedOrigins = ["https://koselig.vercel.app"];
+const allowedOrigins = ["https://koselig.vercel.app", "*"];
 
 // Enable CORS with options
 app.use(
   cors({
     origin: function (origin, callback) {
       // Check if origin is in allowedOrigins array
-      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes("*")) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
