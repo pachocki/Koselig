@@ -9,8 +9,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
-const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3');
-const mime = require('mime');
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const mime = require("mime");
 const fs = require("fs");
 const cron = require("node-cron");
 const multer = require("multer");
@@ -27,6 +27,7 @@ app.use(cors());
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -36,31 +37,33 @@ app.use(function (req, res, next) {
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
-    region: 'us-east-1',
+    region: "us-east-1",
     credentials: {
       accessKeyId: process.env.S3_ACCESS_KEY,
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     },
   });
-  const parts = originalFilename.split('.');
+  const parts = originalFilename.split(".");
   const ext = parts[parts.length - 1];
-  const newFilename = Date.now() + '.' + ext;
-  await client.send(new PutObjectCommand({
-    Bucket: "koselig-wojciech",
-    Body: fs.readFileSync(path),
-    Key: newFilename,
-    ContentType: mimetype,
-    ACL: 'public-read',
-  }));
+  const newFilename = Date.now() + "." + ext;
+  await client.send(
+    new PutObjectCommand({
+      Bucket: "koselig-wojciech",
+      Body: fs.readFileSync(path),
+      Key: newFilename,
+      ContentType: mimetype,
+      ACL: "public-read",
+    })
+  );
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
 
-app.get('/api/test', (req, res) => {
+app.get("/api/test", (req, res) => {
   mongoose.connect(process.env.MONGO_URL, () => {
     console.log("connected with MongoDb");
-    res.json("ok")
+    res.json("ok");
   });
-})
+});
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
@@ -135,31 +138,38 @@ app.post("/api/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
 
-app.post('/api/upload-by-link', async (req,res) => {
+app.post("/api/upload-by-link", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const {link} = req.body;
-  const newName = 'photo' + Date.now() + '.jpg';
+  const { link } = req.body;
+  const newName = "photo" + Date.now() + ".jpg";
   await imageDownloader.image({
     url: link,
-    dest: '/tmp/' + newName,
+    dest: "/tmp/" + newName,
   });
-  const url = await uploadToS3('/tmp/' +newName, newName, mime.lookup('/tmp/' +newName));
+  const url = await uploadToS3(
+    "/tmp/" + newName,
+    newName,
+    mime.lookup("/tmp/" + newName)
+  );
   res.json(url);
 });
 
-const photosMiddleware = multer({dest:'/tmp'});
-app.post('/api/upload', photosMiddleware.array('photos', 100), async (req,res) => {
-  const uploadedFiles = [];
-  for (let i = 0; i < req.files.length; i++) {
-    const {path,originalname,mimetype} = req.files[i];
-    const url = await uploadToS3(path, originalname, mimetype);
-    uploadedFiles.push(url);
+const photosMiddleware = multer({ dest: "/tmp" });
+app.post(
+  "/api/upload",
+  photosMiddleware.array("photos", 100),
+  async (req, res) => {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const { path, originalname, mimetype } = req.files[i];
+      const url = await uploadToS3(path, originalname, mimetype);
+      uploadedFiles.push(url);
+    }
+    res.json(uploadedFiles);
   }
-  res.json(uploadedFiles);
-});
+);
 //places
 app.post("/api/places", (req, res) => {
-  
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
@@ -319,21 +329,23 @@ app.get("/api/bookings", async (req, res) => {
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
 
-  const bookedDates = bookings.map((booking) => {
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
+  const bookedDates = bookings
+    .map((booking) => {
+      const checkIn = new Date(booking.checkIn);
+      const checkOut = new Date(booking.checkOut);
 
-    const dates = [];
+      const dates = [];
 
-    const currentDate = new Date(checkIn);
+      const currentDate = new Date(checkIn);
 
-    while (currentDate < checkOut) {
-      dates.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
+      while (currentDate < checkOut) {
+        dates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
 
-    return dates;
-  }).flat();
+      return dates;
+    })
+    .flat();
 
   res.json({ bookings, bookedDates });
 });
