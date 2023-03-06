@@ -24,9 +24,8 @@ app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 const allowedOrigins = [
-  "https://koselig.vercel.app",
-  "https://koselig-pachocki.vercel.app",
-  "http://localhost:5173",
+  "*",
+ 
 ];
 const corsOptions = {
   origin: function (origin, callback) {
