@@ -153,6 +153,9 @@ app.post('/api/upload', photosMiddleware.array('photos', 100), async (req,res) =
 });
 //places
 app.post("/api/places", (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
