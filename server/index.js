@@ -30,7 +30,16 @@ app.use(
     origin: allowedOrigins,
   })
 );
-
+app.use(function(req, res, next) {
+  const { origin } = req.headers;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
