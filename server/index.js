@@ -97,29 +97,44 @@ app.post("/api/register", async (req, res) => {
 
 //login
 app.post("/api/login", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
-  if (userDoc) {
-    const passOk = bcrypt.compareSync(password, userDoc.password);
-    if (passOk) {
-      jwt.sign(
-        {
-          email: userDoc.email,
-          id: userDoc._id,
-        },
-        jwtSecret,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json(userDoc);
-        }
-      );
+  try {
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGO_URL);
+
+    // Extract email and password from request body
+    const { email, password } = req.body;
+
+    // Find user with given email in database
+    const userDoc = await User.findOne({ email });
+
+    // If user found, check password
+    if (userDoc) {
+      const isPasswordValid = bcrypt.compareSync(password, userDoc.password);
+      if (isPasswordValid) {
+        // If password is valid, create and send JWT token
+        jwt.sign(
+          {
+            email: userDoc.email,
+            id: userDoc._id,
+          },
+          jwtSecret,
+          {},
+          (err, token) => {
+            if (err) throw err;
+            res.cookie("token", token).json(userDoc);
+          }
+        );
+      } else {
+        // If password is invalid, return 401 Unauthorized error
+        res.status(401).json({ error: "Invalid email or password" });
+      }
     } else {
-      res.status(422).json("pass not ok");
+      // If user not found, return 401 Unauthorized error
+      res.status(401).json({ error: "Invalid email or password" });
     }
-  } else {
-    res.json("not found");
+  } catch (error) {
+    // If error occurred, return 500 Internal Server Error
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 //profile
