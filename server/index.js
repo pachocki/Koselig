@@ -212,6 +212,7 @@ app.post("/api/places", (req, res) => {
 });
 
 app.get("/api/places/:id", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
   res.json(await Place.findById(id));
@@ -256,11 +257,13 @@ app.put("/api/places", async (req, res) => {
 });
 
 app.get("/api/user-places", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   res.json(await Place.find());
 });
 
 app.get("/api/places/:id", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
 
@@ -305,6 +308,7 @@ app.put("/api/places/:id", async (req, res) => {
 });
 
 app.get("/api/places", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   res.json(await Place.find());
 });
@@ -333,6 +337,7 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
