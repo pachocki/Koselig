@@ -3,7 +3,7 @@ import React from 'react'
 const Images = ({src,...rest}) => {
     src = src && src.includes('https://')
     ? src
-    : 'https://koselig-wojciech.s3.amazonaws.com/'+src;
+    : 'http://localhost:5000/uploads/'+src;
   return (
     <img  className="rounded-2xl w-full h-full object-cover" {...rest} src={src} alt={''} />
   );
