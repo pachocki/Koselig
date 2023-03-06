@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { AiOutlineUpload } from "react-icons/Ai";
+import { AiOutlineUpload } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import Images from "./Images";
 

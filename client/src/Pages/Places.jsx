@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { AiOutlinePlus } from "react-icons/Ai";
+import { AiOutlinePlus } from "react-icons/ai";
 import AccountNavigation from "../components/AccountNavigation";
 import Images from "../components/Images";
 
