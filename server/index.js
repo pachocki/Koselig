@@ -87,7 +87,7 @@ app.post("/api/register", async (req, res) => {
     res.status(422).json(e);
   }
 });
-
+app.options('/api/login', cors({ origin: allowedOrigins , credentials: true }));
 //login
 app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
