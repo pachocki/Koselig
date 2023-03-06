@@ -28,9 +28,10 @@ const Login = () => {
       );
 
       if (data && data._id) {
+        localStorage.setItem("token", data.token); 
         setIsAuthenticated(true);
-        navigate("/");
-        location.reload();
+        navigate("/")
+      
       } else {
         setErrMsg("Login Failed");
         errRef.current.focus();
