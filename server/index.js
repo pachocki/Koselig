@@ -30,6 +30,13 @@ const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.
 
 // Allow requests from the whitelisted origins
 app.use(cors({ origin: allowedOrigins , credentials: true }));
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', allowedOrigins);
+  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
