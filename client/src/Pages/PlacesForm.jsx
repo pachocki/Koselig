@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Perks from "../components/Perks";
 import { useParams } from "react-router-dom";
-import { AiOutlineUpload, AiFillStar, AiOutlineStar } from "react-icons/Ai";
+import { AiOutlineUpload, AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { BsSave, BsTrash } from "react-icons/bs";
 import axios from "axios";
 import AccountNavigation from "../components/AccountNavigation";
