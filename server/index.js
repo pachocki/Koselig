@@ -23,7 +23,24 @@ const jwtSecret = "fhasd89sa7duasda23131";
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [
+  "*",
+ 
+];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  optionsSuccessStatus: 204,
+  credentials: true
+};
 
+app.use(cors(corsOptions));
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
