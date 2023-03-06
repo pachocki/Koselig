@@ -26,7 +26,14 @@ app.use(cookieParser());
 app.use(
   cors()
 );
-
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
@@ -153,9 +160,7 @@ app.post('/api/upload', photosMiddleware.array('photos', 100), async (req,res) =
 });
 //places
 app.post("/api/places", (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-
+  
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
