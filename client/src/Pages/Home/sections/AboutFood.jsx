@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "../../../assets/food.png"
+import Image from "../../../assets/food.webp"
 
 const AboutFood = () => {
   return (

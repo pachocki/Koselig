@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import Image from "../assets/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { UserContext } from "../context/UserContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { setUser } = useContext(UserContext);
   const errRef = useRef();
   useEffect(() => {
     setErrMsg("");
@@ -16,7 +19,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       const { data } = await axios.post(
         "/login",
@@ -26,12 +29,17 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-
+  
       if (data && data._id) {
-        localStorage.setItem("authToken", data.token); 
+        const token = Cookies.get("token");
+        localStorage.setItem("token", token); 
         setIsAuthenticated(true);
+        const { data: user } = await axios.get("/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(user);
         navigate("/");
-        location.reload();
+
       } else {
         setErrMsg("Login Failed");
         errRef.current.focus();

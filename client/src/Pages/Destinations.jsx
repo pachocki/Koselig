@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 import Images from "../components/Images";
+import Loading from "../components/Loading";
 
 const Destinations = () => {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ 
   useEffect(() => {
     axios.get("/places").then((response) => {
       setPlaces([
@@ -23,7 +24,7 @@ const Destinations = () => {
   return (
     <div>
       {loading ? (
-        <div>Loading...</div>
+        <div><Loading/></div>
       ) : (
         <div
           className="grid grid-cols-3 gap-x-10 gap-y-8 py-28 px-5 min-h-screen lg:grid-cols-2 sm:grid-cols-1 sm:gap-x-2 sm:px-2 sm:pb-10"

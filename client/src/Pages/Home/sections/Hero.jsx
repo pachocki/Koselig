@@ -1,6 +1,6 @@
 import React , {useEffect, useRef} from "react";
-import Image2 from "../../../assets/hero-wow.webp";
-import Image1 from "../../../assets/hero-main.png";
+import Image2 from "../../../assets/hero-img.webp";
+import Image1 from "../../../assets/hero-main.webp";
 import { FiArrowDownLeft } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import {gsap} from "gsap"
@@ -21,7 +21,7 @@ const Hero = () => {
   return (
     <div>
       <div className="flex justify-center items-center  ">
-        <h1 className="font-['iskra']  tracking-[5rem] relative text-[22rem] m-[-50px] header 2xl:pt-10 xl:pt-14 lg:pt-20 lg:pb-7 z-20 " ref={textRef} >
+        <h1 className="font-serif tracking-[5rem] relative text-[22rem] m-[-50px] header 2xl:pt-10 xl:pt-14 lg:pt-20 lg:pb-7 z-20 " ref={textRef} >
           Koselig
         </h1>
       </div>

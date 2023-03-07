@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { NavLink, useParams, Navigate } from "react-router-dom";
+import { NavLink, useParams, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Places from "./Places";
 import AccountNavigation from "../components/AccountNavigation";
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const { user, ready } = useContext(UserContext);
   let { subpage } = useParams();
   if (subpage === undefined) {
@@ -13,8 +14,11 @@ const ProfilePage = () => {
   }
 
   const logout = async () => {
+    localStorage.removeItem("token");
     await axios.post("/logout");
     window.location.href = "/";
+
+
   };
 
   if (!user && ready) {

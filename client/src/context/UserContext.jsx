@@ -7,12 +7,22 @@ export const UserContext = createContext({});
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+
   useEffect(() => {
-    if (!user) {
-      axios.get("/profile").then(({ data }) => {
-        setUser(data);
-        setReady(true);
-      });
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get("/profile", { headers: { Authorization: `Bearer ${token}` } })
+        .then(({ data }) => {
+          setUser(data);
+          setReady(true);
+        })
+        .catch((error) => {
+          console.log("Error fetching user data:", error);
+          setReady(true);
+        });
+    } else {
+      setReady(true);
     }
   }, []);
 

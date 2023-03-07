@@ -1,10 +1,10 @@
 import React from "react";
-import Image1 from "../../../assets/hero5.jpg";
+import Image1 from "../../../assets/hero5.webp";
 import Image2 from "../../../assets/place1.webp";
-import Image3 from "../../../assets/hero7.png";
-import Image4 from "../../../assets/bania.png";
-import Image5 from "../../../assets/hero4.png";
-import Image6 from "../../../assets/hero1.png";
+import Image3 from "../../../assets/hero7.webp";
+import Image4 from "../../../assets/bania.webp";
+import Image5 from "../../../assets/hero4.webp";
+import Image6 from "../../../assets/hero1.webp";
 
 import { FiArrowUpRight } from "react-icons/fi";
 import { Link } from "react-router-dom";

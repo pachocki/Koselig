@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { differenceInCalendarDays } from "date-fns";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
 
@@ -103,12 +103,20 @@ const BookingWidget = ({ place }) => {
                   />
                 </div>
               )}
-              <button
-                className="bg-black py-2 px-3 text-white w-full  font-bold hover:bg-teal- transition-all"
-                onClick={handleBooking}
-              >
-                Book Now
-              </button>
+              {user ? (
+                <button
+                  className="bg-black py-2 px-3 text-white w-full  font-bold hover:bg-teal- transition-all"
+                  onClick={handleBooking}
+                >
+                  Book Now
+                </button>
+              ) : (
+                <Link to="/login">
+                  <button className="bg-black py-2 px-3 text-white w-full  font-bold hover:bg-teal- transition-all">
+                    Login
+                  </button>
+                </Link>
+              )}
               <div className="flex justify-center items-center pt-3">
                 {numberOfNights > 0 && (
                   <span className="text-center font-semibold">

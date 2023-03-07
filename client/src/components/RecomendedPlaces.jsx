@@ -25,23 +25,24 @@ const RecomendedPlaces = () => {
     <div className="m-w-0 overflow-hidden flex bg-gray-50 py-10 items-center sm:flex-col">
       <div className="w-5/6 flex justify-center items-center flex-col gap-2 xl:w-full xl:items-start xl:px-5 ">
         <div className="w-3/4  px-2 pb-4 xl:w-full xl:px-0">
-        <h2 className="text-4xl font-serif pb-5 lg:text-3xl md:text-2xl sm:font-semibold sm:text-xl font-bold">Anbefalte steder av våre brukere</h2>
-        <p className="text-2xl lg:text-xl md:text-lg sm:text-base">
-          Våre brukere har valgt ut disse stedene fordi de tilbyr en rekke
-          spennende aktiviteter og lokale delikatesser som garantert vil
-          tilfredsstille deg. Uansett om du er på utkikk etter eventyr,
-          avslapning eller noe midt imellom, vil du finne noe som passer dine
-          preferanser. Fra vakre naturlandskap til livlige bygater, vil du finne
-          noe som passer for deg. Kom og opplev magien av disse fantastiske
-          stedene, og skap minner som vil vare livet ut.
-        </p>
+          <h2 className="text-4xl font-serif pb-5 lg:text-3xl md:text-2xl sm:font-semibold sm:text-xl font-bold">
+            Anbefalte steder av våre brukere
+          </h2>
+          <p className="text-2xl lg:text-xl md:text-lg sm:text-base">
+            Våre brukere har valgt ut disse stedene fordi de tilbyr en rekke
+            spennende aktiviteter og lokale delikatesser som garantert vil
+            tilfredsstille deg. Uansett om du er på utkikk etter eventyr,
+            avslapning eller noe midt imellom, vil du finne noe som passer dine
+            preferanser. Fra vakre naturlandskap til livlige bygater, vil du
+            finne noe som passer for deg. Kom og opplev magien av disse
+            fantastiske stedene, og skap minner som vil vare livet ut.
+          </p>
         </div>
       </div>
       <Swiper
         spaceBetween={0}
         grabCursor={true}
         loop={true}
-        loopFillGroupWithBlank={true}
         pagination={{
           clickable: true,
         }}
@@ -50,7 +51,7 @@ const RecomendedPlaces = () => {
         className="mySwiper "
       >
         {places.length > 0 &&
-          places?.slice(0,5).map((place, i) => (
+          places?.slice(0, 5).map((place, i) => (
             <SwiperSlide key={place._id} className="">
               <Link to={"/place/" + place._id}>
                 <div

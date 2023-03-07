@@ -1,14 +1,14 @@
 import React from "react";
-import Image1 from "../../../assets/couple-mountains.png";
-import Image2 from "../../../assets/bania.png";
-import Image3 from "../../../assets/friend-mountains.png";
-import Image4 from "../../../assets/couple-in-forest.jpg";
-import Image5 from "../../../assets/hero7.png";
-import Image6 from "../../../assets/hero6.png";
-import Image7 from "../../../assets/hero1.png";
+import Image1 from "../../../assets/couple-mountains.webp";
+import Image2 from "../../../assets/bania.webp";
+import Image3 from "../../../assets/friend-mountains.webp";
+import Image4 from "../../../assets/couple-in-forest.webp";
+import Image5 from "../../../assets/hero7.webp";
+import Image6 from "../../../assets/hero6.webp";
+import Image7 from "../../../assets/hero1.webp";
 import Image8 from "../../../assets/hero-check.webp"
-import Image9 from "../../../assets/pexels-pavel-danilyuk-6550328.png"
-import Image10 from "../../../assets/hero2.jpg"
+import Image9 from "../../../assets/couple.webp"
+import Image10 from "../../../assets/hero2.webp"
 const AboutDestinations = () => {
   return (
     <div className="flex justify-center items-center h-screen relative  ">
@@ -44,12 +44,12 @@ const AboutDestinations = () => {
       />
       <img
         src={Image7}
-        className="w-[180px] absolute top-8 left-1/3 lg:left-[40%] xl:h-1/5    sm:hidden"
+        className="w-[180px] absolute top-2 left-1/3 lg:left-[40%] xl:h-1/5    sm:hidden"
         alt="outdoor-bath"
       />
        <img
         src={Image8}
-        className="w-[180px] absolute top-8 right-1/3 xl:h-1/4  lg:hidden  "
+        className="w-[180px] absolute top-2 right-1/3 xl:h-1/4  lg:hidden  "
         alt="outdoor-bath"
       />
        <img

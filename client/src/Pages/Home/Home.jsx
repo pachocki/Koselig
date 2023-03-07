@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import RecomendedPlaces from "../../components/RecomendedPlaces";
 import AboutDestinations from "./sections/AboutDestinations";
 import AboutFood from "./sections/AboutFood";
@@ -28,9 +27,8 @@ const Home = () => {
       <Regions />
       <AboutDestinations />
       <AboutFood />
-      <RecomendedPlaces/>
+      <RecomendedPlaces />
       <AboutText />
-     
     </div>
   );
 };
