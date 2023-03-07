@@ -4,14 +4,27 @@ import AccountNavigation from "../components/AccountNavigation";
 import { Link } from "react-router-dom";
 import BookingsDate from "../components/BookingsDate";
 import Images from "../components/Images";
+import Loading from "../components/Loading";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
+  const [loading,setLoading] = useState(true);
+
   useEffect(() => {
-    axios.get("bookings").then((response) => {
-      setBookings(response.data);
-    });
+    axios.get("bookings")
+      .then(({ data }) => {
+        setBookings(data.bookings);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return <div><Loading/></div>;
+  }
 
   return (
     <div className="min-h-screen  pt-28 px-2 ">
@@ -22,23 +35,23 @@ const Bookings = () => {
       <div className="flex flex-col gap-2 pt-10 w-2/3 lg:w-full mx-auto sm:w-full sm:px-2 sm:pb-8">
         <h2 className="font-bold text-xl py-2 px-1">Dine bestillinger :</h2>
         {bookings?.length > 0 &&
-          bookings.map((booking) => {
+          bookings?.map((booking) => {
             const currentDate = new Date();
-            const checkOutDate = new Date(booking.checkOut);
+            const checkOutDate = new Date(booking?.checkOut);
             const showBooking = currentDate <= checkOutDate;
             if (!showBooking) {
               return null;
             }
             return (
-              <Link to={`/account/bookings/${booking._id}`} key={booking._id}>
+              <Link to={`/account/bookings/${booking?._id}`} key={booking?._id}>
                 <div className="flex bg-gray-200 rounded-xl gap-4 items-center cursor-pointer sm:flex-col sm:gap-0 sm:pb-3">
-                  {booking.place?.photos.length > 0 && (
+                  {booking.place?.photos?.length > 0 && (
                     <div className="w-1/4 h-1/2 py-2 px-2 sm:w-full">
                       <Images
                         src={
-                          booking.place.photos[0]
+                          booking?.place?.photos[0]
                         }
-                        alt={booking.place.title}
+                        alt={booking?.place?.title}
                         className="object-cover w-full  rounded-lg"
                       />
                     </div>

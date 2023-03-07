@@ -12,6 +12,7 @@ const BookingWidget = ({ place }) => {
   const [redirect, setRedirect] = useState("");
   const [numberOfGuests, setNumberOfGuests] = useState(1);
   const { user } = useContext(UserContext);
+ 
   useEffect(() => {
     if (user) {
       setName(user.name);

@@ -4,27 +4,35 @@ import axios from "axios";
 import PlaceInfo from "../components/PlaceInfo";
 import Gallery from "../components/Gallery";
 import BookingsDate from "../components/BookingsDate";
+import Loading from "../components/Loading";
 
 const SingleBooking = () => {
   const { id } = useParams();
-  const [booking, setBooking] = useState(null);
+  const [booking, setBooking] = useState([]);
+  const [loading,setLoading] = useState(true);
  
   useEffect(() => {
     if (id) {
-      axios.get("/bookings").then((response) => {
-        const foundBooking = response.data.find(({ _id }) => _id === id);
+      axios.get("/bookings").then(({ data }) => {
+        const foundBooking = data.bookings.find(({ _id }) => _id === id);
         if (foundBooking) {
           setBooking(foundBooking);
+          setLoading(false);
         }
       });
     }
   }, [id]);
+ 
 
   if (!booking) {
     return "";
   }
+  if (loading) {
+    return <div><Loading/></div>;
+  }
+
   return (
-    <div className="pt-10 pb-20 px-5 max-w-[1400px] mx-auto sm:pt-24">
+    <div className="pt-24 pb-20 px-5 max-w-[1400px] mx-auto sm:pt-24">
       <PlaceInfo place={booking.place} />
       <Gallery place={booking.place} />
       <div className="bg-gray-200 px-2 py-5 mt-2 rounded-xl">
