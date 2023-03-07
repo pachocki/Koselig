@@ -59,7 +59,7 @@ const PhotosUploader = ({addedPhotos,onChange}) => {
   <div className=" grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
     {addedPhotos.length > 0 &&
       addedPhotos.map((link, i) => (
-        <div className="relative h-60" key={link + i}>
+        <div className="relative h-60 lg:h-42" key={link + i}>
           <button className="absolute w-7 h-7 rounded-lg bg-red-500 bottom-2 right-2 fill-white flex justify-center items-center cursor-pointer hover:opacity-50">
           <BsTrash className="fill-white w-4 h-4"/>
           </button>

@@ -117,7 +117,7 @@ const PlacesForm = () => {
     <div className="pt-28 px-2">
       <AccountNavigation />
       <div className="flex justify-center py-10 ">
-        <form className="flex flex-col gap-3  mx-auto w-4/5 sm:w-full" onSubmit={savePlace}>
+        <form className="flex flex-col gap-3  mx-auto w-4/5 md:w-[98%] sm:w-full" onSubmit={savePlace}>
           <label className="text-gray-600 font-medium pl-2 text-xl sm:text-lg">
             Title:
           </label>
@@ -168,7 +168,7 @@ const PlacesForm = () => {
           <div className=" grid sm:grid-cols-3 md:grid-cols-4 grid-cols-4 gap-2">
             {addedPhotos.length > 0 &&
               addedPhotos.map((link, i) => (
-                <div className="relative h-60" key={link + i}>
+                <div className="relative h-60 lg:h-40" key={link + i}>
                   <button
                     className="absolute w-7 h-7 rounded-lg bg-red-500 bottom-2 right-2 fill-white flex justify-center items-center cursor-pointer hover:opacity-50"
                     onClick={(ev) => removePhoto(ev, link)}
