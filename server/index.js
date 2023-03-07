@@ -113,6 +113,7 @@ app.post("/api/login", async (req, res) => {
         (err, token) => {
           if (err) throw err;
           res.cookie("token", token).json(userDoc);
+          localStorage.setItem("token", token); // save token to local storage
         }
       );
     } else {
@@ -133,7 +134,7 @@ app.get("/api/profile", (req, res) => {
       res.json({ name, email, _id });
     });
   } else {
-    res.json(null);
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
 //logout

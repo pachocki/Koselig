@@ -32,14 +32,14 @@ const Login = () => {
   
       if (data && data._id) {
         const token = Cookies.get("token");
-        localStorage.setItem("token", token); 
+        localStorage.setItem("token", token); // save token to localStorage
         setIsAuthenticated(true);
         const { data: user } = await axios.get("/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(user);
         navigate("/");
-
+  
       } else {
         setErrMsg("Login Failed");
         errRef.current.focus();
