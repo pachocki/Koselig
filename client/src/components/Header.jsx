@@ -37,40 +37,84 @@ const Header = () => {
           <div className="grid grid-cols-2 gap-20 ">
             <div className="flex flex-col gap-5 text-4xl sm:text-2xl">
               <h2 className=" font-bold">Steder</h2>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Vestland
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Trøndelag
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Sørlandet
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Nord-Noreg
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Østlandet
               </Link>
             </div>
             <div className="flex flex-col gap-5 text-4xl sm:text-2xl">
               <h2 className=" font-bold">Type</h2>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Landsby
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 By
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Strand
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Fjell
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Safari
               </Link>
-              <Link to="/destinations" className="hover:opacity-50">
+              <Link
+                to="/destinations"
+                className="hover:opacity-50"
+                onClick={() => setShowMenu(false)}
+              >
                 Natur
               </Link>
             </div>
