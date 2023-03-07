@@ -24,22 +24,22 @@ const AboutDestinations = () => {
       />
       <img
         src={Image3}
-        className="w-[180px] absolute bottom-8 right-60 2xl:right-36 2xl:w-[150px]  lg:w-[130px] lg:right-12 sm:right-2"
+        className="w-[180px] absolute bottom-8 right-60 2xl:right-36 2xl:w-[150px]  lg:w-[130px] lg:h-[130px] lg:object-cover lg:right-12 sm:right-2"
         alt="mountains-friends"
       />
       <img
         src={Image4}
-        className="w-[180px] absolute top-8 right-60 2xl:right-36 2xl:w-[150px] lg:w-[130px] lg:right-12 sm:right-2 "
+        className="w-[180px] absolute top-8 right-60 2xl:right-36 2xl:w-[150px] lg:w-[130px] lg:h-[130px] object-cover lg:right-12 sm:right-2 "
         alt="forest"
       />
       <img
         src={Image5}
-        className="w-[180px] absolute bottom-8 left-60 2xl:left-40 lg:w-[150px] lg:left-12 sm:left-2"
+        className="w-[180px] absolute bottom-8 left-60 2xl:left-40 lg:w-[150px] lg:h-[150px] lg:object-cover  lg:left-12 sm:left-2"
         alt="hytte"
       />
       <img
         src={Image6}
-        className="w-[180px] absolute top-8 left-60 2xl:left-40 lg:w-[150px]  lg:left-12 sm:left-2"
+        className="w-[180px] absolute top-8 left-60 2xl:left-40 lg:w-[150px] lg:h-[150px]  lg:left-12 sm:left-2"
         alt="mountains"
       />
       <img
