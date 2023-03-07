@@ -30,14 +30,11 @@ const Login = () => {
         { withCredentials: true }
       );
   
-      if (data && data._id) {
-        const token = Cookies.get("token");
-        localStorage.setItem("token", token); // save token to localStorage
+      if (data && data.user && data.user._id) {
+        const token = data.token;
+        localStorage.setItem("token", token);
         setIsAuthenticated(true);
-        const { data: user } = await axios.get("/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(user);
+        setUser(data.user);
         navigate("/");
   
       } else {

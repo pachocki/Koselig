@@ -112,8 +112,7 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie("token", token).json(userDoc);
-          localStorage.setItem("token", token); // save token to local storage
+          res.cookie("token", token).json({ user: userDoc, token });
         }
       );
     } else {
