@@ -13,7 +13,7 @@ const Gallery = ({place}) => {
       <div className="absolute inset-0 bg-black/60 text-white min-h-screen min-w-screen m-auto transition-all z-50 h-full sm:fixed sm:overflow-scroll">
         <div className="bg-black p-8 grid gap-4 sm:overflow-y-hidden">
           <div>
-            <h2 className="text-3xl mr-48 sm:text-sm sm:w-1/2">Photos of {place.title}</h2>
+            <h2 className="text-3xl mr-48 lg:text-2xl sm:text-sm sm:w-1/2">Photos of {place.title}</h2>
             <button
               onClick={() => close()}
               className="fixed right-12 top-8 flex gap-1 py-2 px-4 rounded-2xl items-center shadow shadow-black bg-white text-black sm:right-2 sm:px-2 sm:py-1 sm:text-sm"
