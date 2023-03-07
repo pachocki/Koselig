@@ -15,13 +15,13 @@ const Destinations = () => {
       <div className="grid grid-cols-2  pt-5 relative lg:grid-cols-[2fr_1fr] sm:px-2">
         <div className="w-full flex  px-5 gap-10 lg:gap-2 sm:px-0 ">
           <div className="w-1/2 ">
-            <div className="overflow-hidden w-[300px]">
+            <div className="overflow-hidden">
               <Link to="/destinations">
                 {" "}
                 <img
                   src={Image1}
                   alt="image"
-                  className="w-full h-[400px] xl:w-full  xl:h-auto xl:object-cover transition duration-500 hover:scale-110"
+                  className="w-[300px] h-[400px] lg:w-full object-cover sm:h-auto  transition duration-500 hover:scale-110"
                 />
               </Link>
             </div>
@@ -31,12 +31,12 @@ const Destinations = () => {
             </p>
           </div>
           <div className="w-1/2">
-            <div className="overflow-hidden w-[300px]">
+            <div className="overflow-hidden">
               <Link to="/destinations">
                 {" "}
                 <img
                   src={Image2}
-                  className=" h-[400px]  xl:w-full  xl:h-auto xl:object-cover transition duration-500 hover:scale-110 "
+                  className="w-[300px] h-[400px] xl:w-full  xl:h-auto xl:object-cover transition duration-500 hover:scale-110 "
                   alt="image "
                 />
               </Link>
