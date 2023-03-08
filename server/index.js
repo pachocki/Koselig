@@ -34,6 +34,12 @@ app.use(cors({
   },
   credentials: true
 }));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
