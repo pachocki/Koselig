@@ -8,10 +8,11 @@ import Loading from "../components/Loading";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("bookings")
+    axios
+      .get("bookings")
       .then(({ data }) => {
         setBookings(data.bookings);
         setLoading(false);
@@ -23,7 +24,11 @@ const Bookings = () => {
   }, []);
 
   if (loading) {
-    return <div><Loading/></div>;
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
   }
 
   return (
@@ -38,7 +43,12 @@ const Bookings = () => {
           bookings?.map((booking) => {
             const currentDate = new Date();
             const checkOutDate = new Date(booking?.checkOut);
-            const showBooking = currentDate <= checkOutDate;
+            const fiveDaysAfterCheckOutDate = new Date(
+              checkOutDate.setDate(checkOutDate.getDate() + 5)
+            ); 
+            const showBooking =
+              currentDate <= fiveDaysAfterCheckOutDate &&
+              currentDate <= checkOutDate; 
             if (!showBooking) {
               return null;
             }
@@ -48,9 +58,7 @@ const Bookings = () => {
                   {booking.place?.photos?.length > 0 && (
                     <div className="w-1/4 h-1/2 py-2 px-2 sm:w-full">
                       <Images
-                        src={
-                          booking?.place?.photos[0]
-                        }
+                        src={booking?.place?.photos[0]}
                         alt={booking?.place?.title}
                         className="object-cover w-full  rounded-lg"
                       />
