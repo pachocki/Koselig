@@ -53,6 +53,7 @@ const Bookings = () => {
               return null;
             }
             return (
+             
               <Link to={`/account/bookings/${booking?._id}`} key={booking?._id}>
                 <div className="flex bg-gray-200 rounded-xl gap-4 items-center cursor-pointer sm:flex-col sm:gap-0 sm:pb-3">
                   {booking.place?.photos?.length > 0 && (

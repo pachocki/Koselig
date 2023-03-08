@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Image from "../assets/login.jpg";
+import Image from "../assets/login.webp";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
