@@ -95,20 +95,23 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req,res) => {
+app.post('/api/login', async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const {email,password} = req.body;
-  const userDoc = await User.findOne({email});
+  const { email, password } = req.body;
+  const userDoc = await User.findOne({ email });
   if (userDoc) {
     const passOk = bcrypt.compareSync(password, userDoc.password);
     if (passOk) {
-      jwt.sign({
-        email:userDoc.email,
-        id:userDoc._id
-      }, jwtSecret, {}, (err,token) => {
-        if (err) throw err;
-        res.cookie('token', token).json(userDoc);
-      });
+      jwt.sign(
+        { email: userDoc.email, id: userDoc._id },
+        jwtSecret,
+        {},
+        (err, token) => {
+          if (err) throw err;
+          res.cookie('token', token).json(userDoc);
+          localStorage.setItem('token', token); // Set token in local storage
+        }
+      );
     } else {
       res.status(422).json('pass not ok');
     }
@@ -117,20 +120,24 @@ app.post('/api/login', async (req,res) => {
   }
 });
 
-app.get('/api/profile', (req,res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const {token} = req.cookies;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const {name,email,_id} = await User.findById(userData.id);
-      res.json({name,email,_id});
-    });
-  } else {
-    res.json(null);
+app.get('/api/profile', async (req, res) => {
+  try {
+    await mongoose.connect(process.env.MONGO_URL);
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const decodedToken = jwt.verify(token, jwtSecret);
+    const user = await User.findById(decodedToken.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ name: user.name, email: user.email, _id: user._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
 app.post('/api/logout', (req,res) => {
   res.cookie('token', '').json(true);
 });
