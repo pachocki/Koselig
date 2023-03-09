@@ -33,7 +33,7 @@ app.use((req, res, next) => {
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -45,6 +45,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type"],
   credentials: true,
 }));
+
 
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
@@ -82,24 +83,9 @@ app.get("/api/test", (req, res) => {
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    let token = localStorage.getItem('token');
-    if (!token) {
-      token = req.cookies.token;
-    }
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) {
-        // If token is invalid, check cookies
-        token = req.cookies.token;
-        jwt.verify(token, jwtSecret, {}, async (err2, userData2) => {
-          if (err2) {
-            reject(err2);
-          } else {
-            resolve(userData2);
-          }
-        });
-      } else {
-        resolve(userData);
-      }
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      resolve(userData);
     });
   });
 }
@@ -151,10 +137,11 @@ app.post("/api/login", async (req, res) => {
 });
 //profile
 app.get("/api/profile", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
+  res.setHeader('Access-Control-Allow-Origin',"https://koselig.vercel.app");
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
   res.setHeader('Access-Control-Allow-Credentials', true);
+  mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -335,6 +322,10 @@ app.get("/api/places", async (req, res) => {
 });
 
 app.post("/api/bookings", async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin',"https://koselig.vercel.app");
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
@@ -358,6 +349,10 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin',"https://koselig.vercel.app");
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
