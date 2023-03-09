@@ -102,16 +102,13 @@ app.post('/api/login', async (req, res) => {
   if (userDoc) {
     const passOk = bcrypt.compareSync(password, userDoc.password);
     if (passOk) {
-      jwt.sign(
-        { email: userDoc.email, id: userDoc._id },
-        jwtSecret,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie('token', token).json(userDoc);
-          localStorage.setItem('token', token); // Set token in local storage
-        }
-      );
+      jwt.sign({
+        email: userDoc.email,
+        id: userDoc._id
+      }, jwtSecret, {}, (err, token) => {
+        if (err) throw err;
+        res.cookie('token', token, { httpOnly: true }).json(userDoc);
+      });
     } else {
       res.status(422).json('pass not ok');
     }
@@ -121,21 +118,19 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.get('/api/profile', async (req, res) => {
-  try {
-    await mongoose.connect(process.env.MONGO_URL);
-    const token = req.cookies.token;
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
+  mongoose.connect(process.env.MONGO_URL);
+  const { token } = req.cookies;
+  if (token) {
+    try {
+      const userData = jwt.verify(token, jwtSecret);
+      const { name, email, _id } = await User.findById(userData.id);
+      res.json({ name, email, _id });
+    } catch (err) {
+      console.error(err);
+      res.status(401).json({ error: 'Unauthorized' });
     }
-    const decodedToken = jwt.verify(token, jwtSecret);
-    const user = await User.findById(decodedToken.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.json({ name: user.name, email: user.email, _id: user._id });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
   }
 });
 app.post('/api/logout', (req,res) => {

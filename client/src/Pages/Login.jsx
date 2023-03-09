@@ -13,9 +13,9 @@ const Login = () => {
   async function handleLoginSubmit(ev) {
     ev.preventDefault();
     try {
-      const { data } = await axios.post("/login", { email, password });
-      console.log(data);
-      localStorage.setItem("token", data.token);
+      const { data } = await axios.post("/login", { email, password }, { withCredentials: true });
+      const token = localStorage.getItem("token");
+      localStorage.setItem("token", token);
       setUser(data);
       setRedirect(true);
     } catch (e) {
