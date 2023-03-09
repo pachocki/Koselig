@@ -12,7 +12,7 @@ const Bookings = () => {
 
   useEffect(() => {
     axios
-      .get("/bookings", { withCredentials: true })
+      .get("/bookings")
       .then(({ data }) => {
         setBookings(data.bookings);
         setLoading(false);
@@ -23,13 +23,7 @@ const Bookings = () => {
       });
   }, []);
 
-  if (loading) {
-    return (
-      <div>
-        <Loading />
-      </div>
-    );
-  }
+ 
 
   return (
     <div className="min-h-screen  pt-28 px-2 ">
