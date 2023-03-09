@@ -77,13 +77,20 @@ app.get('/api/test', (req, res) => {
   });
 })
 
-function getUserDataFromReq(req) {
-  return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      resolve(userData);
-    });
-  });
+async function getUserDataFromReq  (req) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Unauthorized');
+  }
+
+  // Use a library like jwt to verify the token and extract the user ID
+  const decodedToken = jwt.verify(token, jwtSecret);
+  const userId = decodedToken.userId;
+
+  // Get the user data from the database using the user ID
+  const user = await User.findById(userId);
+
+  return user;
 }
 
 //register
