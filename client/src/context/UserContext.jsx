@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-import { data } from "autoprefixer";
 
 export const UserContext = createContext({});
 
@@ -9,10 +8,10 @@ export function UserContextProvider({ children }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     if (token) {
       axios
-        .get("/profile", { headers: { Authorization: `Bearer ${token}` } })
+        .get("/api/profile", { headers: { Authorization: `Bearer ${token}` } })
         .then(({ data }) => {
           setUser(data);
           setReady(true);
