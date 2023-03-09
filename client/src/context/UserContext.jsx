@@ -8,7 +8,10 @@ export function UserContextProvider({ children }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    let token = Cookies.get("token");
+    if (!token) {
+      token = localStorage.getItem("token");
+    }
     if (token) {
       axios
         .get("/api/profile", { headers: { Authorization: `Bearer ${token}` } })

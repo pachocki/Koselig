@@ -7,12 +7,16 @@ import Images from "../components/Images";
 import Loading from "../components/Loading";
 
 const Bookings = () => {
-  const [bookings, setBookings] = useState([]);
+   const [bookings,setBookings] = useState([]);
+   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    axios.get("/bookings").then((response) => {
+    axios.get('/bookings').then(response => {
       setBookings(response.data);
+      setLoading(false)
     });
   }, []);
+
+ 
 
   return (
     <div className="min-h-screen  pt-28 px-2 ">
@@ -22,7 +26,10 @@ const Bookings = () => {
 
       <div className="flex flex-col gap-2 pt-10 w-2/3 lg:w-full mx-auto sm:w-full sm:px-2 sm:pb-8">
         <h2 className="font-bold text-xl py-2 px-1">Dine bestillinger :</h2>
-        {bookings?.length > 0 &&
+        {loading ? (
+          <Loading />
+        ) : (
+          bookings?.length > 0 &&
           bookings.map((booking) => (
             <Link to={`/account/bookings/${booking._id}`} key={booking._id}>
               <div className="flex bg-gray-200 rounded-xl gap-4 items-center cursor-pointer sm:flex-col sm:gap-0 sm:pb-3">
@@ -38,7 +45,8 @@ const Bookings = () => {
                 <BookingsDate booking={booking} />
               </div>
             </Link>
-          ))}
+          ))
+        )}
       </div>
     </div>
   );

@@ -26,10 +26,17 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
@@ -58,16 +65,12 @@ async function uploadToS3(path, originalFilename, mimetype) {
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
 
-app.get("/api/test", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL, () => {
-    console.log("connected with MongoDb");
-    res.json("ok");
-  });
-});
+
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+    const token = localStorage.getItem("token"); // retrieve token from local storage
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
       resolve(userData);
     });
@@ -204,6 +207,9 @@ app.get("/api/places/:id", async (req, res) => {
 });
 
 app.put("/api/places", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
@@ -253,6 +259,10 @@ app.get("/api/places/:id", async (req, res) => {
   res.json(await Place.findById(id));
 });
 app.put("/api/places/:id", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
