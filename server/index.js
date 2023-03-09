@@ -139,7 +139,7 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie("token", token).json(userDoc);
+          res.cookie("token", token, { sameSite: 'lax', secure: true }).json({ user: userDoc, token });
         }
       );
     } else {
@@ -165,7 +165,7 @@ app.get("/api/profile", (req, res) => {
 });
 //logout
 app.post("/api/logout", (req, res) => {
-  res.cookie("token", "").json(true);
+  res.cookie("token", token, { sameSite: 'lax', secure: true }).json({ user: userDoc, token });
 });
 
 app.post("/api/upload-by-link", async (req, res) => {
