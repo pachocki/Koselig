@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import Image from "../assets/login.webp";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
@@ -74,13 +74,7 @@ const Login = () => {
                   Register
                 </Link>
               </span>
-              <p
-                ref={errRef}
-                className={errMsg ? "block text-red-600 text-center" : "hidden"}
-                aria-live="assertive"
-              >
-                {errMsg}
-              </p>
+             
             </form>
           </div>
         </div>
