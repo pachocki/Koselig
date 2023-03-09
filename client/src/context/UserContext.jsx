@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
-
+import Cookies from "js-cookie";
 export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
