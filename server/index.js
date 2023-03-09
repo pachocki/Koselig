@@ -20,7 +20,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
-const allowedOrigins = ["*",'https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app', 'http://localhost:5173' ];
+const allowedOrigins = ["*",'https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app'];
 
 app.use(cors({
   origin: function(origin, callback) {
