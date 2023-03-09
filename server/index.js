@@ -121,7 +121,7 @@ app.post("/api/register", async (req, res) => {
 //login
 
 app.post("/api/login", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app/");
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
