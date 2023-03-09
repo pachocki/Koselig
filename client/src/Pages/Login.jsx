@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import Image from "../assets/login.webp";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
 
 import { UserContext } from "../context/UserContext";
 
@@ -15,9 +14,9 @@ const Login = () => {
     ev.preventDefault();
     try {
       const { data } = await axios.post("/login", { email, password });
-      const token = data.token; // assuming the token is returned in the "token" field of the response
-      localStorage.setItem("token", token); // save the token in local storage
-      Cookies.set("token", response.data.token);
+      const token = data.token; 
+      localStorage.setItem("token", token);
+      console.log(data) 
       setUser(data);
       setRedirect(true);
     } catch (e) {
