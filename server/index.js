@@ -20,7 +20,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
-const allowedOrigins = ["*",'https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app', 'http://localhost:5173' ];
+const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app', 'http://localhost:5173' ];
 
 app.use(cors({
   origin: function(origin, callback) {
@@ -113,6 +113,9 @@ app.post("/api/register", async (req, res) => {
 
 //login
 app.post("/api/login", async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app/');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
@@ -313,6 +316,9 @@ app.get("/api/places", async (req, res) => {
 });
 
 app.post("/api/bookings", async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
@@ -336,6 +342,9 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
