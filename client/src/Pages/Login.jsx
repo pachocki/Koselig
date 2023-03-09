@@ -35,9 +35,7 @@ const Login = () => {
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
         setUser(data.user);
-      
         navigate("/");
-        window.location.reload()
   
       } else {
         setErrMsg("Login Failed");
