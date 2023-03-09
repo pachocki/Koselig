@@ -65,20 +65,13 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-async function getUserDataFromReq(req) {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    throw new Error("Unauthorized");
-  }
-
-  // Use a library like jwt to verify the token and extract the user ID
-  const decodedToken = jwt.verify(token, jwtSecret);
-  const userId = decodedToken.userId;
-
-  // Get the user data from the database using the user ID
-  const user = await User.findById(userId);
-
-  return user;
+function getUserDataFromReq(req) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      resolve(userData);
+    });
+  });
 }
 
 //register
@@ -99,54 +92,44 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-//login
-
-app.post("/api/login", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+app.post('/api/login', async (req,res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
+  const {email,password} = req.body;
+  const userDoc = await User.findOne({email});
   if (userDoc) {
     const passOk = bcrypt.compareSync(password, userDoc.password);
     if (passOk) {
-      jwt.sign(
-        {
-          email: userDoc.email,
-          id: userDoc._id,
-        },
-        jwtSecret,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token, { sameSite: 'none', secure: false }).json({ user: userDoc, token });
-        }
-      );
+      jwt.sign({
+        email:userDoc.email,
+        id:userDoc._id
+      }, jwtSecret, {}, (err,token) => {
+        if (err) throw err;
+        res.cookie('token', token).json(userDoc);
+      });
     } else {
-      res.status(422).json("pass not ok");
+      res.status(422).json('pass not ok');
     }
   } else {
-    res.json("not found");
+    res.json('not found');
   }
 });
 
-app.get("/api/profile", (req, res) => {
+app.get('/api/profile', (req,res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
+  const {token} = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const { name, email, _id } = await User.findById(userData.id);
-      res.json({ name, email, _id });
+      const {name,email,_id} = await User.findById(userData.id);
+      res.json({name,email,_id});
     });
   } else {
     res.json(null);
   }
 });
-//logout
-app.post("/api/logout", (req, res) => {
-  res.cookie("token", token, { sameSite: 'lax', secure: true }).json({ user: userDoc, token });
+
+app.post('/api/logout', (req,res) => {
+  res.cookie('token', '').json(true);
 });
 
 app.post("/api/upload-by-link", async (req, res) => {
