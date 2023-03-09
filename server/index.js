@@ -21,25 +21,13 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = "fhasd89sa7duasda23131";
 
 const allowedOrigins = [
-  "*",
+  
   "https://koselig.vercel.app",
   "https://koselig-pachocki.vercel.app",
-];
+  "http://localhost:5173"
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this origin doesn't allow access from the particular origin.`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true,
-  })
-);
+
+];
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -49,6 +37,13 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true,
+}));
+
 
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
