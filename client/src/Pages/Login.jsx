@@ -11,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { setUser } = useContext(UserContext);
+  const { user,setUser } = useContext(UserContext);
   const errRef = useRef();
   useEffect(() => {
     setErrMsg("");
@@ -36,6 +36,7 @@ const Login = () => {
         setIsAuthenticated(true);
         setUser(data.user);
         navigate("/");
+      
   
       } else {
         setErrMsg("Login Failed");
@@ -55,6 +56,9 @@ const Login = () => {
       errRef.current.focus();
     }
   };
+  useEffect(() => {
+    console.log("User updated:", user);
+  }, [user]);
 
   return (
     <div className="w-full h-screen flex justify-center items-center pt-20 lg:px-2">
