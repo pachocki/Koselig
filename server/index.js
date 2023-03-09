@@ -21,19 +21,15 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = "fhasd89sa7duasda23131";
 
 const allowedOrigins = [
-  "https://koselig.vercel.app",
-  "https://koselig-pachocki.vercel.app",
-  "http://localhost:5173",
+  'https://koselig.vercel.app'
 ];
 
-app.use(
-  cors({
-    origin: [
-      "https://koselig.vercel.app"
-    ],
-  })
-);
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true
+};
 
+app.use(cors(corsOptions));
 
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
@@ -124,7 +120,7 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie("token", token, { sameSite: 'lax', secure: true }).json({ user: userDoc, token });
+          res.cookie("token", token, { sameSite: 'none', secure: false }).json({ user: userDoc, token });
         }
       );
     } else {
