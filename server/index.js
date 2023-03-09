@@ -82,13 +82,24 @@ app.get("/api/test", (req, res) => {
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    let token = req.cookies.token;
-    if (!token && typeof window !== 'undefined') {
-      token = localStorage.getItem('token');
+    let token = localStorage.getItem('token');
+    if (!token) {
+      token = req.cookies.token;
     }
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      resolve(userData);
+      if (err) {
+        // If token is invalid, check cookies
+        token = req.cookies.token;
+        jwt.verify(token, jwtSecret, {}, async (err2, userData2) => {
+          if (err2) {
+            reject(err2);
+          } else {
+            resolve(userData2);
+          }
+        });
+      } else {
+        resolve(userData);
+      }
     });
   });
 }
