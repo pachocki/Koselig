@@ -11,7 +11,6 @@ const Bookings = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
- 
     axios
       .get("/bookings", { withCredentials: true })
       .then(({ data }) => {
@@ -40,37 +39,27 @@ const Bookings = () => {
 
       <div className="flex flex-col gap-2 pt-10 w-2/3 lg:w-full mx-auto sm:w-full sm:px-2 sm:pb-8">
         <h2 className="font-bold text-xl py-2 px-1">Dine bestillinger :</h2>
-        {bookings?.length > 0 &&
-          bookings?.map((booking) => {
-            const currentDate = new Date();
-            const checkOutDate = new Date(booking?.checkOut);
-            const fiveDaysAfterCheckOutDate = new Date(
-              checkOutDate.setDate(checkOutDate.getDate() + 5)
-            ); 
-            const showBooking =
-              currentDate <= fiveDaysAfterCheckOutDate &&
-              currentDate <= checkOutDate; 
-            if (!showBooking) {
-              return null;
-            }
-            return (
-             
-              <Link to={`/account/bookings/${booking?._id}`} key={booking?._id}>
-                <div className="flex bg-gray-200 rounded-xl gap-4 items-center cursor-pointer sm:flex-col sm:gap-0 sm:pb-3">
-                  {booking.place?.photos?.length > 0 && (
-                    <div className="w-1/4 h-1/2 py-2 px-2 sm:w-full">
-                      <Images
-                        src={booking?.place?.photos[0]}
-                        alt={booking?.place?.title}
-                        className="object-cover w-full  rounded-lg"
-                      />
-                    </div>
-                  )}
-                  <BookingsDate booking={booking} />
-                </div>
-              </Link>
-            );
-          })}
+        {loading ? (
+          <Loading />
+        ) : (
+          bookings?.length > 0 &&
+          bookings.map((booking) => (
+            <Link to={`/account/bookings/${booking._id}`} key={booking._id}>
+              <div className="flex bg-gray-200 rounded-xl gap-4 items-center cursor-pointer sm:flex-col sm:gap-0 sm:pb-3">
+                {booking.place?.photos?.length > 0 && (
+                  <div className="w-1/4 h-1/2 py-2 px-2 sm:w-full">
+                    <Images
+                      src={booking?.place?.photos[0]}
+                      alt={booking?.place?.title}
+                      className="object-cover w-full  rounded-lg"
+                    />
+                  </div>
+                )}
+                <BookingsDate booking={booking} />
+              </div>
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
