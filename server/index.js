@@ -100,7 +100,12 @@ app.post("/api/register", async (req, res) => {
 });
 
 //login
-app.post('/api/login', async (req, res) => {
+
+app.post("/api/login", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
   if (userDoc) {
@@ -115,30 +120,22 @@ app.post('/api/login', async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          const response = { user: userDoc, token };
-          if (req.query.auth === 'cookie') {
-            res.cookie('token', token, { sameSite: 'none', secure: true }).json(response);
-          } else {
-            res.json(response);
-          }
+          res.cookie("token", token, { sameSite: 'none', secure: false }).json({ user: userDoc, token });
         }
       );
     } else {
-      res.status(422).json('Invalid email or password');
+      res.status(422).json("pass not ok");
     }
   } else {
-    res.status(422).json('Invalid email or password');
+    res.json("not found");
   }
 });
-
 
 app.get("/api/profile", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
-  const localStorageToken = localStorage.getItem('token');
-  if (token || localStorageToken) {
-    const verifiedToken = token || localStorageToken;
-    jwt.verify(verifiedToken, jwtSecret, {}, async (err, userData) => {
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
       const { name, email, _id } = await User.findById(userData.id);
       res.json({ name, email, _id });
