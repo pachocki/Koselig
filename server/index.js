@@ -9,8 +9,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
-const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3');
-const mime = require('mime');
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const mime = require("mime");
 const fs = require("fs");
 const cron = require("node-cron");
 const multer = require("multer");
@@ -20,27 +20,33 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
-const allowedOrigins = ['https://koselig.vercel.app', 'https://koselig-pachocki.vercel.app', 'http://localhost:5173' ];
+const allowedOrigins = [
+  "https://koselig.vercel.app",
+  "https://koselig-pachocki.vercel.app",
+  "http://localhost:5173",
+];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = `The CORS policy for this origin doesn't allow access from the particular origin.`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `The CORS policy for this origin doesn't allow access from the particular origin.`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
@@ -48,39 +54,40 @@ app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 
-
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
-    region: 'us-east-1',
+    region: "us-east-1",
     credentials: {
       accessKeyId: process.env.S3_ACCESS_KEY,
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     },
   });
-  const parts = originalFilename.split('.');
+  const parts = originalFilename.split(".");
   const ext = parts[parts.length - 1];
-  const newFilename = Date.now() + '.' + ext;
-  await client.send(new PutObjectCommand({
-    Bucket: "koselig-wojciech",
-    Body: fs.readFileSync(path),
-    Key: newFilename,
-    ContentType: mimetype,
-    ACL: 'public-read',
-  }));
+  const newFilename = Date.now() + "." + ext;
+  await client.send(
+    new PutObjectCommand({
+      Bucket: "koselig-wojciech",
+      Body: fs.readFileSync(path),
+      Key: newFilename,
+      ContentType: mimetype,
+      ACL: "public-read",
+    })
+  );
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
 
-app.get('/api/test', (req, res) => {
+app.get("/api/test", (req, res) => {
   mongoose.connect(process.env.MONGO_URL, () => {
     console.log("connected with MongoDb");
-    res.json("ok")
+    res.json("ok");
   });
-})
+});
 
-async function getUserDataFromReq  (req) {
-  const token = localStorage.getItem('token');
+async function getUserDataFromReq(req) {
+  const token = localStorage.getItem("token");
   if (!token) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   // Use a library like jwt to verify the token and extract the user ID
@@ -112,10 +119,11 @@ app.post("/api/register", async (req, res) => {
 });
 
 //login
+
 app.post("/api/login", async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app/');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app/");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
@@ -131,7 +139,7 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie("token", token).json({ user: userDoc, token });
+          res.cookie("token", token).json(userDoc);
         }
       );
     } else {
@@ -141,7 +149,7 @@ app.post("/api/login", async (req, res) => {
     res.json("not found");
   }
 });
-//profile
+
 app.get("/api/profile", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
@@ -152,7 +160,7 @@ app.get("/api/profile", (req, res) => {
       res.json({ name, email, _id });
     });
   } else {
-    res.status(401).json({ message: "Unauthorized" });
+    res.json(null);
   }
 });
 //logout
@@ -160,28 +168,36 @@ app.post("/api/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
 
-app.post('/api/upload-by-link', async (req,res) => {
+app.post("/api/upload-by-link", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const {link} = req.body;
-  const newName = 'photo' + Date.now() + '.jpg';
+  const { link } = req.body;
+  const newName = "photo" + Date.now() + ".jpg";
   await imageDownloader.image({
     url: link,
-    dest: '/tmp/' + newName,
+    dest: "/tmp/" + newName,
   });
-  const url = await uploadToS3('/tmp/' +newName, newName, mime.lookup('/tmp/' +newName));
+  const url = await uploadToS3(
+    "/tmp/" + newName,
+    newName,
+    mime.lookup("/tmp/" + newName)
+  );
   res.json(url);
 });
 
-const photosMiddleware = multer({dest:'/tmp'});
-app.post('/api/upload', photosMiddleware.array('photos', 100), async (req,res) => {
-  const uploadedFiles = [];
-  for (let i = 0; i < req.files.length; i++) {
-    const {path,originalname,mimetype} = req.files[i];
-    const url = await uploadToS3(path, originalname, mimetype);
-    uploadedFiles.push(url);
+const photosMiddleware = multer({ dest: "/tmp" });
+app.post(
+  "/api/upload",
+  photosMiddleware.array("photos", 100),
+  async (req, res) => {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const { path, originalname, mimetype } = req.files[i];
+      const url = await uploadToS3(path, originalname, mimetype);
+      uploadedFiles.push(url);
+    }
+    res.json(uploadedFiles);
   }
-  res.json(uploadedFiles);
-});
+);
 //places
 app.post("/api/places", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -316,9 +332,9 @@ app.get("/api/places", async (req, res) => {
 });
 
 app.post("/api/bookings", async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
@@ -342,28 +358,30 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
 
-  const bookedDates = bookings.map((booking) => {
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
+  const bookedDates = bookings
+    .map((booking) => {
+      const checkIn = new Date(booking.checkIn);
+      const checkOut = new Date(booking.checkOut);
 
-    const dates = [];
+      const dates = [];
 
-    const currentDate = new Date(checkIn);
+      const currentDate = new Date(checkIn);
 
-    while (currentDate < checkOut) {
-      dates.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
+      while (currentDate < checkOut) {
+        dates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
 
-    return dates;
-  }).flat();
+      return dates;
+    })
+    .flat();
 
   res.json({ bookings, bookedDates });
 });
