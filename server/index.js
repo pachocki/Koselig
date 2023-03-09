@@ -33,8 +33,10 @@ app.use((req, res, next) => {
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
 app.use(cors({
@@ -43,7 +45,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type"],
   credentials: true,
 }));
-
 
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
@@ -136,6 +137,9 @@ app.post("/api/login", async (req, res) => {
 //profile
 app.get("/api/profile", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
