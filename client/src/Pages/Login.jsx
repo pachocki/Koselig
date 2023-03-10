@@ -3,7 +3,7 @@ import Image from "../assets/login.webp";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { UserContext } from "../context/UserContext";
+import {UserContext} from "../context/UserContext"
 
 const Login = () => {
   const navigate = useNavigate();
