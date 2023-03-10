@@ -1,3 +1,9 @@
+import {createContext, useEffect, useState} from "react";
+import axios from "axios";
+import {data} from "autoprefixer";
+
+export const UserContext = createContext({});
+
 export function UserContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
@@ -6,7 +12,7 @@ export function UserContextProvider({ children }) {
     const token = Cookies.get('token') || localStorage.getItem('token');
     if (token) {
       axios
-        .get('/profile', {
+        .get('/api/profile', {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(({ data }) => {
