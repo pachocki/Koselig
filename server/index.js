@@ -96,45 +96,73 @@ app.post("/api/register", async (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
-  if (userDoc) {
-    const passOk = bcrypt.compareSync(password, userDoc.password);
-    if (passOk) {
-      jwt.sign({
-        email: userDoc.email,
-        id: userDoc._id
-      }, jwtSecret, {}, (err, token) => {
-        if (err) throw err;
-        res.cookie('token', token, { httpOnly: true }).json(userDoc);
-      });
-    } else {
-      res.status(422).json('pass not ok');
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-  } else {
-    res.json('not found');
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      jwtSecret,
+      { expiresIn: '1h' }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 app.get('/api/profile', async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  if (token) {
-    try {
-      const userData = jwt.verify(token, jwtSecret);
-      const { name, email, _id } = await User.findById(userData.id);
-      res.json({ name, email, _id });
-    } catch (err) {
-      console.error(err);
-      res.status(401).json({ error: 'Unauthorized' });
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, jwtSecret);
+    const user = await User.findById(decodedToken.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  } else {
+
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error(error);
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
-app.post('/api/logout', (req,res) => {
-  res.cookie('token', '').json(true);
+
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('token').json({ message: 'Logged out successfully' });
 });
 
 app.post("/api/upload-by-link", async (req, res) => {
