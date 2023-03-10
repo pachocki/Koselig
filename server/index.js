@@ -23,10 +23,9 @@ const jwtSecret = "fhasd89sa7duasda23131";
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
-const allowedOrigins = [
 
-  "https://koselig.vercel.app",
-];
+const allowedOrigins = ["https://koselig.vercel.app"];
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
@@ -41,6 +40,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
