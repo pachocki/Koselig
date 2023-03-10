@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -20,19 +19,33 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
-const allowedOrigins = ["https://koselig.vercel.app"];
+const allowedOrigins = [
+  "https://koselig.vercel.app",
+];
 
-const corsOptions = {
-  origin: allowedOrigins,
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `The CORS policy for this origin doesn't allow access from the particular origin.`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
 
@@ -63,10 +76,16 @@ async function uploadToS3(path, originalFilename, mimetype) {
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
 
+app.get("/api/test", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL, () => {
+    console.log("connected with MongoDb");
+    res.json("ok");
+  });
+});
+
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
-    const token = localStorage.getItem("token"); // retrieve token from local storage
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
       resolve(userData);
     });
@@ -91,7 +110,9 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+//login
 app.post("/api/login", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
   if (userDoc) {
@@ -106,51 +127,33 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res
-            .cookie("token", token, {
-              httpOnly: true,
-              sameSite: "none",
-              secure: true,
-            })
-            .json(userDoc);
+          res.cookie("token", token).json({ user: userDoc, token });
         }
       );
     } else {
-      res.status(422).json("Invalid email or password");
+      res.status(422).json("pass not ok");
     }
   } else {
-    res.status(422).json("Invalid email or password");
+    res.json("not found");
   }
 });
-
-app.get("/api/profile", async (req, res) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
-  try {
-    const decodedToken = jwt.verify(token, jwtSecret);
-    const user = await User.findById(decodedToken.id);
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.status(200).json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
+//profile
+app.get("/api/profile", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const { name, email, _id } = await User.findById(userData.id);
+      res.json({ name, email, _id });
     });
-  } catch (error) {
-    console.error(error);
-    res.status(401).json({ error: "Unauthorized" });
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
-
+//logout
 app.post("/api/logout", (req, res) => {
-  res.clearCookie("token").json({ message: "Logged out successfully" });
+  res.cookie("token", "").json(true);
 });
 
 app.post("/api/upload-by-link", async (req, res) => {
@@ -225,9 +228,6 @@ app.get("/api/places/:id", async (req, res) => {
 });
 
 app.put("/api/places", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
@@ -277,10 +277,6 @@ app.get("/api/places/:id", async (req, res) => {
   res.json(await Place.findById(id));
 });
 app.put("/api/places/:id", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
@@ -324,9 +320,6 @@ app.get("/api/places", async (req, res) => {
 });
 
 app.post("/api/bookings", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
@@ -350,9 +343,13 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
