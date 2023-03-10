@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 const allowedOrigins = [
 
-  "https://koselig.vercel.app/",
+  "https://koselig.vercel.app",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
