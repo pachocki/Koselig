@@ -7,16 +7,22 @@ import Images from "../components/Images";
 import Loading from "../components/Loading";
 
 const Bookings = () => {
-   const [bookings,setBookings] = useState([]);
-   const [loading, setLoading] = useState(true);
+  const [bookings, setBookings] = useState([]);
+  const [loading,setLoading] = useState(true);
+
   useEffect(() => {
-    axios.get('/bookings').then(response => {
-      setBookings(response.data);
-      setLoading(false)
-    });
+    axios.get("bookings")
+      .then(({ data }) => {
+        setBookings(data.bookings);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
   }, []);
 
- 
+
 
   return (
     <div className="min-h-screen  pt-28 px-2 ">

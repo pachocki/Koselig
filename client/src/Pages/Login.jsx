@@ -11,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { user,setUser } = useContext(UserContext);
+  const {setUser } = useContext(UserContext);
   const errRef = useRef();
   useEffect(() => {
     setErrMsg("");
@@ -22,7 +22,7 @@ const Login = () => {
   
     try {
       const { data } = await axios.post(
-        "/api/login",
+        "/login",
         {
           email,
           password,
@@ -34,7 +34,7 @@ const Login = () => {
         const token = Cookies.get("token");
         localStorage.setItem("token", token); // save token to localStorage
         setIsAuthenticated(true);
-        const { data: user } = await axios.get("/api/profile", {
+        const { data: user } = await axios.get("/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(user);
