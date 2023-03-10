@@ -22,7 +22,7 @@ const Login = () => {
   
     try {
       const { data } = await axios.post(
-        "/login",
+        "/api/login",
         {
           email,
           password,
@@ -30,13 +30,15 @@ const Login = () => {
         { withCredentials: true }
       );
   
-      if (data && data.user && data.user._id) {
-        const token = data.token;
-        localStorage.setItem("token", token);
+      if (data && data._id) {
+        const token = Cookies.get("token");
+        localStorage.setItem("token", token); // save token to localStorage
         setIsAuthenticated(true);
-        setUser(data.user);
+        const { data: user } = await axios.get("/api/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(user);
         navigate("/");
-      
   
       } else {
         setErrMsg("Login Failed");
@@ -56,9 +58,6 @@ const Login = () => {
       errRef.current.focus();
     }
   };
-  useEffect(() => {
-    console.log("User updated:", user);
-  }, [user]);
 
   return (
     <div className="w-full h-screen flex justify-center items-center pt-20 lg:px-2">
