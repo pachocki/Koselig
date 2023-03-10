@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -19,39 +20,27 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
-const allowedOrigins = [
-  "https://koselig.vercel.app",
-];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this origin doesn't allow access from the particular origin.`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true,
-  })
-);
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = [
+
+  "https://koselig.vercel.app/",
+];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  optionsSuccessStatus: 204,
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
@@ -127,7 +116,7 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res.cookie("token", token).json({ user: userDoc, token });
+          res.cookie("token", token).json(userDoc);
         }
       );
     } else {
@@ -148,14 +137,13 @@ app.get("/api/profile", (req, res) => {
       res.json({ name, email, _id });
     });
   } else {
-    res.status(401).json({ message: "Unauthorized" });
+    res.json(null);
   }
 });
 //logout
 app.post("/api/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
-
 
 app.post("/api/upload-by-link", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -223,6 +211,7 @@ app.post("/api/places", (req, res) => {
 });
 
 app.get("/api/places/:id", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
   res.json(await Place.findById(id));
@@ -267,11 +256,13 @@ app.put("/api/places", async (req, res) => {
 });
 
 app.get("/api/user-places", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   res.json(await Place.find());
 });
 
 app.get("/api/places/:id", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
 
@@ -316,6 +307,7 @@ app.put("/api/places/:id", async (req, res) => {
 });
 
 app.get("/api/places", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   res.json(await Place.find());
 });
@@ -344,13 +336,7 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
