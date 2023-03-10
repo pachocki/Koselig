@@ -20,9 +20,7 @@ const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
 
-const allowedOrigins = [
-  'https://koselig.vercel.app'
-];
+const allowedOrigins = ["https://koselig.vercel.app"];
 
 const corsOptions = {
   origin: allowedOrigins,
@@ -65,8 +63,6 @@ async function uploadToS3(path, originalFilename, mimetype) {
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
 
-
-
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
     const token = localStorage.getItem("token"); // retrieve token from local storage
@@ -95,51 +91,43 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.post('/api/login', async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+  const userDoc = await User.findOne({ email });
+  if (userDoc) {
+    const passOk = bcrypt.compareSync(password, userDoc.password);
+    if (passOk) {
+      jwt.sign(
+        {
+          email: userDoc.email,
+          id: userDoc._id,
+        },
+        jwtSecret,
+        {},
+        (err, token) => {
+          if (err) throw err;
+          res
+            .cookie("token", token, {
+              httpOnly: true,
+              sameSite: "none",
+              secure: true,
+            })
+            .json(userDoc);
+        }
+      );
+    } else {
+      res.status(422).json("Invalid email or password");
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign(
-      { email: user.email, id: user._id },
-      jwtSecret,
-      { expiresIn: '1h' }
-    );
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      maxAge: 60 * 60 * 1000, // 1 hour
-    });
-
-    res.status(200).json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+  } else {
+    res.status(422).json("Invalid email or password");
   }
 });
 
-app.get('/api/profile', async (req, res) => {
+app.get("/api/profile", async (req, res) => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   try {
@@ -147,7 +135,7 @@ app.get('/api/profile', async (req, res) => {
     const user = await User.findById(decodedToken.id);
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
     res.status(200).json({
@@ -157,12 +145,12 @@ app.get('/api/profile', async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(401).json({ error: 'Unauthorized' });
+    res.status(401).json({ error: "Unauthorized" });
   }
 });
 
-app.post('/api/logout', (req, res) => {
-  res.clearCookie('token').json({ message: 'Logged out successfully' });
+app.post("/api/logout", (req, res) => {
+  res.clearCookie("token").json({ message: "Logged out successfully" });
 });
 
 app.post("/api/upload-by-link", async (req, res) => {
@@ -292,7 +280,7 @@ app.put("/api/places/:id", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  
+
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
   const {
