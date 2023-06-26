@@ -24,9 +24,6 @@ app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 
-
-
-
 const allowedOrigins = ["https://koselig.vercel.app"];
 
 // Define allowedOrigins variable before using it
