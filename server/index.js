@@ -342,29 +342,38 @@ app.post("/api/bookings", async (req, res) => {
 
 app.get("/api/bookings", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-  mongoose.connect(process.env.MONGO_URL);
-  const userData = await getUserDataFromReq(req);
-  const bookings = await Booking.find({ user: userData.id }).populate("place");
 
-  const bookedDates = bookings
-    .map((booking) => {
-      const checkIn = new Date(booking.checkIn);
-      const checkOut = new Date(booking.checkOut);
+  // Connect to MongoDB
+  await mongoose.connect(process.env.MONGO_URL);
 
-      const dates = [];
+  try {
+    const userData = await getUserDataFromReq(req);
 
-      const currentDate = new Date(checkIn);
+    // Find bookings associated with the user and populate the "place" field
+    const bookings = await Booking.find({ user: userData.id }).populate("place");
 
-      while (currentDate < checkOut) {
-        dates.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
+    const bookedDates = bookings
+      .map((booking) => {
+        const checkIn = new Date(booking.checkIn);
+        const checkOut = new Date(booking.checkOut);
 
-      return dates;
-    })
-    .flat();
+        const dates = [];
 
-  res.json({ bookings, bookedDates });
+        const currentDate = new Date(checkIn);
+
+        while (currentDate < checkOut) {
+          dates.push(new Date(currentDate));
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return dates;
+      })
+      .flat();
+
+    res.json({ bookings, bookedDates });
+  } catch (error) {
+    res.status(401).json({ error: error.message });
+  }
 });
 
 // Schedule a task to run every day at midnight
