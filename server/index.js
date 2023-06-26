@@ -63,14 +63,6 @@ async function uploadToS3(path, originalFilename, mimetype) {
   );
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
-
-app.get("/api/test", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL, () => {
-    console.log("connected with MongoDb");
-    res.json("ok");
-  });
-});
-
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
     jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
@@ -79,6 +71,13 @@ function getUserDataFromReq(req) {
     });
   });
 }
+
+app.get("/api/test", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL, () => {
+    console.log("connected with MongoDb");
+    res.json("ok");
+  });
+});
 
 //register
 
