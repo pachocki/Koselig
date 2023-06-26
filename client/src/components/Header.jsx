@@ -13,7 +13,7 @@ const Header = () => {
   if (showMenu) {
     return (
       <div className="fixed right-0 top-0 bg-black/60  w-full  min-h-screen min-w-screen m-auto transition-all   z-50  sm:fixed sm:overflow-scroll h-screen">
-        <div className="rounded-l-xl bg-white w-2/3 right-0 p-8 grid gap-4 sm:overflow-y-hidden h-screen absolute transition-all sm:w-full">
+        <div className="rounded-l-xl bg-white w-2/3 right-0 p-8 grid gap-4 sm:overflow-y-hidden h-screen absolute transition-all sm:w-full sm:rounded-none">
           <div>
             <h2 className="text-3xl mr-48 sm:text-2xl sm:w-1/2">Menu </h2>
             <button
@@ -153,7 +153,7 @@ const Header = () => {
           <div>
             <TbWorld className="text-2xl sm:hidden" />
           </div>
-          <div className=" flex gap-4 py-2 px-4 rounded-full items-center">
+          <div className=" flex gap-4 py-2 px-4 rounded-full items-center sm:gap-1">
             <GiHamburgerMenu
               className="text-2xl cursor-pointer hover:opacity-50"
               onClick={() => setShowMenu(true)}
@@ -163,7 +163,9 @@ const Header = () => {
               className="flex gap-2 items-center hover:opacity-50"
             >
               <CgProfile className="text-2xl " />
-              {!!user && <span className="sm:text-sm">{user.name}</span>}
+              {!!user && (
+                <span className="sm:text-sm"> {user.name.split(" ")[0]}</span>
+              )}
             </Link>
           </div>
         </div>

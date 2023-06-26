@@ -22,8 +22,8 @@ const RecomendedPlaces = () => {
     });
   }, []);
   return (
-    <div className="m-w-0 overflow-hidden flex bg-gray-50 py-10 items-center sm:flex-col">
-      <div className="w-5/6 flex justify-center items-center flex-col gap-2 xl:w-full xl:items-start xl:px-5 ">
+    <div className="m-w-0 overflow-hidden flex bg-gray-50 py-10 items-center sm:flex-col ">
+      <div className="w-5/6 flex justify-center items-center flex-col gap-2 xl:w-full xl:items-start xl:px-5 xs:px-2">
         <div className="w-3/4  px-2 pb-4 xl:w-full xl:px-0">
         <h2 className="text-4xl font-serif pb-5 lg:text-3xl md:text-2xl sm:font-semibold sm:text-xl font-bold">Anbefalte steder av våre brukere</h2>
         <p className="text-2xl lg:text-xl md:text-lg sm:text-base">

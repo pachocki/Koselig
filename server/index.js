@@ -24,7 +24,7 @@ app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ["https://koselig.vercel.app"];
+const allowedOrigins = ["http://localhost:5173"];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -36,12 +36,10 @@ const corsOptions = {
   },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 204,
-  credentials: true
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
-
-
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
@@ -101,6 +99,7 @@ app.post("/api/register", async (req, res) => {
 });
 
 //login
+
 app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;

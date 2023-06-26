@@ -6,76 +6,98 @@ import Image4 from "../../../assets/couple-in-forest.webp";
 import Image5 from "../../../assets/hero7.webp";
 import Image6 from "../../../assets/hero6.webp";
 import Image7 from "../../../assets/hero1.webp";
-import Image8 from "../../../assets/hero-check.webp"
-import Image9 from "../../../assets/couple.webp"
-import Image10 from "../../../assets/hero2.webp"
+import Image8 from "../../../assets/hero-check.webp";
+import Image9 from "../../../assets/couple.webp";
+import Image10 from "../../../assets/hero2.webp";
+import Image11 from "../../../assets/hero-check3.webp";
+import Image12 from "../../../assets/hero-check2.webp";
 const AboutDestinations = () => {
   return (
-    <div className="flex justify-center items-center h-screen relative  ">
-      <img
-        src={Image1}
-        className="w-[200px] absolute top-1/3 right-5 2xl:right-1 lg:w-1/6 sm:hidden"
-        alt="mountains-couple"
-      />
-      <img
-        src={Image2}
-        className="w-[200px] absolute top-1/3 left-5 2xl:left-1 lg:w-1/6 sm:hidden "
-        alt="bania"
-      />
-      <img
-        src={Image3}
-        className="w-[180px] absolute bottom-8 right-60 2xl:right-36 2xl:w-[150px]  lg:w-[130px] lg:h-[130px] lg:object-cover lg:right-12 sm:right-2"
-        alt="mountains-friends"
-      />
-      <img
-        src={Image4}
-        className="w-[180px] absolute top-8 right-60 2xl:right-36 2xl:w-[150px] lg:w-[130px] lg:h-[130px] object-cover lg:right-12 sm:right-2 "
-        alt="forest"
-      />
-      <img
-        src={Image5}
-        className="w-[180px] absolute bottom-8 left-60 2xl:left-40 lg:w-[150px] lg:h-[150px] lg:object-cover  lg:left-12 sm:left-2"
-        alt="hytte"
-      />
-      <img
-        src={Image6}
-        className="w-[180px] absolute top-8 left-60 2xl:left-40 lg:w-[150px] lg:h-[150px]  lg:left-12 sm:left-2"
-        alt="mountains"
-      />
-      <img
-        src={Image7}
-        className="w-[180px] absolute top-2 left-1/3 lg:left-[40%] xl:h-1/5    sm:hidden"
-        alt="outdoor-bath"
-      />
-       <img
-        src={Image8}
-        className="w-[180px] absolute top-2 right-1/3 xl:h-1/4  lg:hidden  "
-        alt="outdoor-bath"
-      />
-       <img
-        src={Image9}
-        className="w-[180px] absolute bottom-8 right-1/3 lg:right-[40%] xl:h-1/6 xl:object-cover sm:hidden "
-        alt="outdoor-bath"
-      />
+    <div className="grid grid-cols-[1fr_2fr_1fr] gap-5 py-10 px-5 xl:grid-cols-[1fr_3fr_1fr] md:grid-cols-1 sm:px-2">
+      <div className="flex flex-col justify-between py-2 items-center gap-5">
         <img
-        src={Image10}
-        className="w-[180px] absolute bottom-8 left-1/3 lg:hidden"
-        alt="outdoor-bath"
-      />
-      <div className="flex flex-col w-3/6 gap-2  lg:w-2/3 lg:px-5 sm:w-[98%] sm:px-0">
-        <h2 className="text-4xl font-bold  xl:text-3xl sm:text-2xl xs:text-lg ">
-          Opplev fantastiske naturskjønnhet <br />
-          for både actionfylte eventyr og rolige ferier!
-        </h2>
-        <p className="font-semibold text-xl xl:text-lg sm:font-normal">
-          Bli med på en reise gjennom Norges mest idylliske destinasjoner.
-          Uansett om du er en livsglad person som elsker å sykle og utforske
-          fjellvegger, eller en som søker ro og avslapning, har vi noe for deg.
-          Omgitt av den vakreste natur, vil du kunne slappe av og nyte livet i
-          sin helhet. Du vil også oppdage spennende steder hvor du kan nyte
-          fantastisk mat, noe som vil gi både kropp og sjel en velfortjent
-          pause.
-        </p>
+          src={Image1}
+          alt="destination"
+          className="w-[200px] h-[200px] object-cover self-end lg:w-[150px] lg:h-[150px]  md:hidden"
+        />
+        <img
+          src={Image2}
+          alt="destination"
+          className="w-[200px] h-[200px] object-cover self-end lg:w-[150px] lg:h-[150px] md:hidden "
+        />
+        <img
+          src={Image3}
+          alt="destination"
+          className="w-[200px] h-[200px] object-cover self-end lg:w-[150px] lg:h-[150px] md:hidden"
+        />
+      </div>
+      <div className="flex flex-col justify-between  gap-10 sm:gap-5">
+        <div className="flex justify-around items-center md:justify-between ">
+          <img
+            src={Image4}
+            alt="destination"
+            className="w-[200px] h-[200px] object-cover  lg:w-[150px] lg:h-[150px] sm:w-[100px] sm:h-[100px] "
+          />
+          <img
+            src={Image5}
+            alt="destination"
+            className="w-[200px] h-[200px] object-cover  lg:w-[150px] lg:h-[150px] xs:w-[100px] sm:h-[100px]"
+          />
+          <img
+            src={Image6}
+            alt="destination"
+            className="w-[200px] h-[200px] object-cover xl:hidden md:block md:w-[150px] md:h-[150px] sm:w-[100px] sm:h-[100px]"
+          />
+        </div>
+        <div className="py-10 md:py-0">
+          <h2 className="text-4xl font-bold  xl:text-3xl sm:text-2xl xs:text-lg pb-10">
+            Opplev fantastiske naturskjønnhet <br />
+            for både actionfylte eventyr og rolige ferier!
+          </h2>
+          <p className="font-semibold text-xl xl:text-lg sm:font-normal">
+            Bli med på en reise gjennom Norges mest idylliske destinasjoner.
+            Uansett om du er en livsglad person som elsker å sykle og utforske
+            fjellvegger, eller en som søker ro og avslapning, har vi noe for
+            deg. Omgitt av den vakreste natur, vil du kunne slappe av og nyte
+            livet i sin helhet. Du vil også oppdage spennende steder hvor du kan
+            nyte fantastisk mat, noe som vil gi både kropp og sjel en
+            velfortjent pause.
+          </p>
+        </div>
+        <div className="flex justify-around items-center md:justify-between">
+          <img
+            src={Image7}
+            alt="destination"
+            className="w-[200px] h-[200px] object-cover  lg:w-[150px] lg:h-[150px] sm:w-[100px] sm:h-[100px]"
+          />
+          <img
+            src={Image8}
+            alt="destination"
+            className="w-[200px] h-[200px] object-cover  lg:w-[150px] lg:h-[150px] xs:w-[100px] sm:h-[100px]"
+          />
+          <img
+            src={Image9}
+            alt="destination"
+            className="w-[200px] h-[200px] object-cover xl:hidden md:block md:w-[150px] md:h-[150px] sm:w-[100px] sm:h-[100px]"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col justify-between py-2">
+        <img
+          src={Image10}
+          alt="destination"
+          className="w-[200px] h-[200px] object-cover self-start lg:w-[150px] lg:h-[150px]  md:hidden"
+        />
+        <img
+          src={Image11}
+          alt="destination"
+          className="w-[200px] h-[200px] object-cover self-start lg:w-[150px] lg:h-[150px] md:hidden "
+        />
+        <img
+          src={Image12}
+          alt="destination"
+          className="w-[200px] h-[200px] object-cover self-start md:hidden"
+        />
       </div>
     </div>
   );
