@@ -26,10 +26,9 @@ app.use(cookieParser());
 
 const allowedOrigins = ["https://koselig.vercel.app"];
 
-// Define allowedOrigins variable before using it
 const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -37,11 +36,12 @@ const corsOptions = {
   },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 204,
-  credentials: true,
-  allowedHeaders: "*", // Allow all headers
+  credentials: true
 };
 
 app.use(cors(corsOptions));
+
+
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
@@ -101,7 +101,6 @@ app.post("/api/register", async (req, res) => {
 });
 
 //login
-
 app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
