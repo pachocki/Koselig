@@ -50,7 +50,7 @@ const AboutDestinations = () => {
           />
         </div>
         <div className="py-10 md:py-0">
-          <h2 className="text-4xl font-bold  xl:text-3xl sm:text-2xl xs:text-lg pb-10">
+          <h2 className="text-4xl font-bold  xl:text-3xl sm:text-2xl xs:text-lg pb-10 sm:pb-5">
             Opplev fantastiske naturskjønnhet <br />
             for både actionfylte eventyr og rolige ferier!
           </h2>
