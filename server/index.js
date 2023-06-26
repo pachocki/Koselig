@@ -36,12 +36,10 @@ const corsOptions = {
   },
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 204,
-  credentials: true
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
-
-
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
@@ -337,7 +335,6 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserDataFromReq(req);
   const bookings = await Booking.find({ user: userData.id }).populate("place");
