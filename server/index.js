@@ -19,18 +19,18 @@ const app = express();
 const bcryptSalt = bcrypt.genSaltSync(10);
 
 const jwtSecret = "fhasd89sa7duasda23131";
-app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "https://koselig.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", true);
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'https://koselig.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
 app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ["https://koselig.vercel.app", "*"];
+const allowedOrigins = ["https://koselig.vercel.app"];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -120,15 +120,8 @@ app.post("/api/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          const cookieOptions = {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-          };
-
-          const tokenCookie = cookie.serialize("token", token, cookieOptions);
-          res.setHeader("Set-Cookie", tokenCookie);
-          res.json(userDoc);
+          res.cookie("token", token).json(userDoc);
+          localStorage.setItem("token", token);
         }
       );
     } else {
@@ -326,7 +319,6 @@ app.get("/api/places", async (req, res) => {
 
 app.post("/api/bookings", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  res.setHeader("Access-Control-Allow-Origin", "*");
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
     req.body;
@@ -349,38 +341,30 @@ app.post("/api/bookings", async (req, res) => {
 });
 
 app.get("/api/bookings", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
   mongoose.connect(process.env.MONGO_URL);
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  try {
-    const userData = await getUserDataFromReq(req);
+  const userData = await getUserDataFromReq(req);
+  const bookings = await Booking.find({ user: userData.id }).populate("place");
 
-    // Find bookings associated with the user and populate the "place" field
-    const bookings = await Booking.find({ user: userData.id }).populate(
-      "place"
-    );
+  const bookedDates = bookings
+    .map((booking) => {
+      const checkIn = new Date(booking.checkIn);
+      const checkOut = new Date(booking.checkOut);
 
-    const bookedDates = bookings
-      .map((booking) => {
-        const checkIn = new Date(booking.checkIn);
-        const checkOut = new Date(booking.checkOut);
+      const dates = [];
 
-        const dates = [];
+      const currentDate = new Date(checkIn);
 
-        const currentDate = new Date(checkIn);
+      while (currentDate < checkOut) {
+        dates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
 
-        while (currentDate < checkOut) {
-          dates.push(new Date(currentDate));
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
+      return dates;
+    })
+    .flat();
 
-        return dates;
-      })
-      .flat();
-
-    res.json({ bookings, bookedDates });
-  } catch (error) {
-    res.status(401).json({ error: error.message });
-  }
+  res.json({ bookings, bookedDates });
 });
 
 // Schedule a task to run every day at midnight
