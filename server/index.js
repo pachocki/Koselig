@@ -69,6 +69,7 @@ async function uploadToS3(path, originalFilename, mimetype) {
   );
   return `https://koselig-wojciech.s3.amazonaws.com/${newFilename}`;
 }
+
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
     jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
@@ -85,8 +86,7 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-//register
-
+// Register
 app.post("/api/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { name, email, password } = req.body;
@@ -103,285 +103,286 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-//login
+// Login
 app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
-  if (userDoc) {
-    const passOk = bcrypt.compareSync(password, userDoc.password);
-    if (passOk) {
-      jwt.sign(
-        {
-          email: userDoc.email,
-          id: userDoc._id,
-        },
-        jwtSecret,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json(userDoc);
-          localStorage.setItem("token", token);
-        }
-      );
-    } else {
-      res.status(422).json("pass not ok");
-    }
-  } else {
-    res.json("not found");
-  }
-});
-//profile
-app.get("/api/profile", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const { name, email, _id } = await User.findById(userData.id);
-      res.json({ name, email, _id });
-    });
-  } else {
-    res.json(null);
-  }
-});
-//logout
-app.post("/api/logout", (req, res) => {
-  res.cookie("token", "").json(true);
-});
 
-app.post("/api/upload-by-link", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { link } = req.body;
-  const newName = "photo" + Date.now() + ".jpg";
-  await imageDownloader.image({
-    url: link,
-    dest: "/tmp/" + newName,
-  });
-  const url = await uploadToS3(
-    "/tmp/" + newName,
-    newName,
-    mime.lookup("/tmp/" + newName)
-  );
-  res.json(url);
-});
-
-const photosMiddleware = multer({ dest: "/tmp" });
-app.post(
-  "/api/upload",
-  photosMiddleware.array("photos", 100),
-  async (req, res) => {
-    const uploadedFiles = [];
-    for (let i = 0; i < req.files.length; i++) {
-      const { path, originalname, mimetype } = req.files[i];
-      const url = await uploadToS3(path, originalname, mimetype);
-      uploadedFiles.push(url);
-    }
-    res.json(uploadedFiles);
-  }
-);
-//places
-app.post("/api/places", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  const {
-    title,
-    address,
-    addedPhotos,
-    description,
-    price,
-    perks,
-    extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
-  } = req.body;
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err;
-    const placeDoc = await Place.create({
-      owner: userData.id,
-      price,
-      title,
-      address,
-      photos: addedPhotos,
-      description,
-      perks,
-      extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
-    });
-    res.json(placeDoc);
-  });
-});
-
-app.get("/api/places/:id", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-  mongoose.connect(process.env.MONGO_URL);
-  const { id } = req.params;
-  res.json(await Place.findById(id));
-});
-
-app.put("/api/places", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  const {
-    id,
-    title,
-    address,
-    addedPhotos,
-    description,
-    perks,
-    extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
-    price,
-  } = req.body;
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err;
-    const placeDoc = await Place.findById(id);
-    if (userData.id === placeDoc.owner.toString()) {
-      placeDoc.set({
-        title,
-        address,
-        photos: addedPhotos,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        price,
-      });
-      await placeDoc.save();
-      res.json("ok");
-    }
-  });
-});
-
-app.get("/api/user-places", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-  mongoose.connect(process.env.MONGO_URL);
-  res.json(await Place.find());
-});
-
-app.get("/api/places/:id", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-  mongoose.connect(process.env.MONGO_URL);
-  const { id } = req.params;
-
-  res.json(await Place.findById(id));
-});
-app.put("/api/places/:id", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  const {
-    id,
-    title,
-    address,
-    photos: addedPhotos,
-    description,
-    perks,
-    extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
-    price,
-  } = req.body;
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    const placeDoc = await Place.findById(id);
-
-    if (userData.id === placeDoc.owner.toString()) {
-      placeDoc.set({
-        title,
-        address,
-        photos: addedPhotos,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        price,
-      });
-      await placeDoc.save();
-      res.json("ok");
-    }
-  });
-});
-
-app.get("/api/places", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-  mongoose.connect(process.env.MONGO_URL);
-  res.json(await Place.find());
-});
-
-app.post("/api/bookings", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const userData = await getUserDataFromReq(req);
-  const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
-    req.body;
-  Booking.create({
-    place,
-    checkIn,
-    checkOut,
-    numberOfGuests,
-    name,
-    phone,
-    price,
-    user: userData.id,
-  })
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      throw err;
-    });
-});
-
-app.get("/api/bookings", async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-  mongoose.connect(process.env.MONGO_URL);
-  const userData = await getUserDataFromReq(req);
-  const bookings = await Booking.find({ user: userData.id }).populate("place");
-
-  const bookedDates = bookings
-    .map((booking) => {
-      const checkIn = new Date(booking.checkIn);
-      const checkOut = new Date(booking.checkOut);
-
-      const dates = [];
-
-      const currentDate = new Date(checkIn);
-
-      while (currentDate < checkOut) {
-        dates.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      return dates;
-    })
-    .flat();
-
-  res.json({ bookings, bookedDates });
-});
-
-// Schedule a task to run every day at midnight
-cron.schedule("0 0 * * *", async () => {
-  const today = new Date();
   try {
-    // Find all bookings where the date has passed
-    const bookings = await Booking.find({ date: { $lt: today } });
-    for (let booking of bookings) {
-      await booking.remove();
+    const user = await User.findOne({ email });
+    if (user && bcrypt.compareSync(password, user.password)) {
+      const token = jwt.sign(
+        { userId: user._id, email: user.email },
+        jwtSecret
+      );
+      res.cookie("token", token, { httpOnly: true });
+      res.json({ success: true });
+    } else {
+      res.status(422).json({ error: "Invalid email or password" });
     }
-    console.log(`Removed ${bookings.length} expired bookings.`);
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    res.status(422).json(e);
   }
 });
 
-app.listen(5000 || process.env.PORT, () => {
-  console.log("Serven listen port 5000");
+// Logout
+app.get("/api/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ success: true });
+});
+
+// Get user data
+app.get("/api/user", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId, "-password");
+    res.json(user);
+  } catch (e) {
+    res.status(401).json({ error: "Unauthorized" });
+  }
+});
+
+// Get places
+app.get("/api/places", async (req, res) => {
+  try {
+    const places = await Place.find();
+    res.json(places);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Get place by ID
+app.get("/api/places/:id", async (req, res) => {
+  try {
+    const place = await Place.findById(req.params.id);
+    res.json(place);
+  } catch (e) {
+    res.status(404).json({ error: "Place not found" });
+  }
+});
+
+// Create place
+app.post("/api/places", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId);
+
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const { title, description, price, location, image } = req.body;
+
+    const imagePath = `./uploads/${Date.now()}.jpg`;
+    await imageDownloader.image({
+      url: image,
+      dest: imagePath,
+    });
+
+    const imageUrl = await uploadToS3(
+      imagePath,
+      "image.jpg",
+      mime.getType(imagePath)
+    );
+
+    fs.unlinkSync(imagePath);
+
+    const place = await Place.create({
+      title,
+      description,
+      price,
+      location,
+      image: imageUrl,
+      user: user._id,
+    });
+
+    res.json(place);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Update place
+app.put("/api/places/:id", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId);
+
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const place = await Place.findById(req.params.id);
+
+    if (!place) {
+      res.status(404).json({ error: "Place not found" });
+      return;
+    }
+
+    if (place.user.toString() !== user._id.toString()) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const { title, description, price, location, image } = req.body;
+
+    let imageUrl = place.image;
+
+    if (image && image !== place.image) {
+      const imagePath = `./uploads/${Date.now()}.jpg`;
+      await imageDownloader.image({
+        url: image,
+        dest: imagePath,
+      });
+
+      imageUrl = await uploadToS3(
+        imagePath,
+        "image.jpg",
+        mime.getType(imagePath)
+      );
+
+      fs.unlinkSync(imagePath);
+    }
+
+    place.title = title || place.title;
+    place.description = description || place.description;
+    place.price = price || place.price;
+    place.location = location || place.location;
+    place.image = imageUrl;
+
+    await place.save();
+
+    res.json(place);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Delete place
+app.delete("/api/places/:id", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId);
+
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const place = await Place.findById(req.params.id);
+
+    if (!place) {
+      res.status(404).json({ error: "Place not found" });
+      return;
+    }
+
+    if (place.user.toString() !== user._id.toString()) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    await place.delete();
+
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Create booking
+app.post("/api/bookings", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId);
+
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const { placeId, startDate, endDate } = req.body;
+
+    const place = await Place.findById(placeId);
+
+    if (!place) {
+      res.status(404).json({ error: "Place not found" });
+      return;
+    }
+
+    const booking = await Booking.create({
+      user: user._id,
+      place: place._id,
+      startDate,
+      endDate,
+    });
+
+    res.json(booking);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Get bookings by user
+app.get("/api/bookings", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId);
+
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const bookings = await Booking.find({ user: user._id })
+      .populate("user", "-password")
+      .populate("place");
+
+    res.json(bookings);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Delete booking
+app.delete("/api/bookings/:id", async (req, res) => {
+  try {
+    const userData = await getUserDataFromReq(req);
+    const user = await User.findById(userData.userId);
+
+    if (!user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      res.status(404).json({ error: "Booking not found" });
+      return;
+    }
+
+    if (booking.user.toString() !== user._id.toString()) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    await booking.delete();
+
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+// Run the server
+const port = process.env.PORT || 3000;
+
+mongoose.connect(process.env.MONGO_URL, () => {
+  console.log("Connected to MongoDB");
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
 });
