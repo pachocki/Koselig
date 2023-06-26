@@ -24,22 +24,17 @@ app.use("/api/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ["https://koselig.vercel.app"];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 204,
   credentials: true,
 };
 
 app.use(cors(corsOptions));
+
+
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
