@@ -13,7 +13,7 @@ const SingleBooking = () => {
  
   useEffect(() => {
     if (id) {
-      axios.get("/api/bookings").then(({ data }) => {
+      axios.get("bookings").then(({ data }) => {
         const foundBooking = data.bookings.find(({ _id }) => _id === id);
         if (foundBooking) {
           setBooking(foundBooking);
