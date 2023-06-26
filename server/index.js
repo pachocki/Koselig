@@ -25,11 +25,26 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-app.use(cors({
-  origin: "https://koselig.vercel.app",
-  headers: ["Content-Type"],
+
+
+const allowedOrigins = ["https://koselig.vercel.app"];
+
+// Define allowedOrigins variable before using it
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  optionsSuccessStatus: 204,
   credentials: true,
-}));
+  allowedHeaders: "*", // Allow all headers
+};
+
+app.use(cors(corsOptions));
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
