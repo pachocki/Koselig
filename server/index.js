@@ -25,16 +25,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-const corsOptions = {
-  origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  optionsSuccessStatus: 204,
+app.use(cors({
+  origin: "https://koselig.vercel.app",
+  headers: ["Content-Type"],
   credentials: true,
-};
-
-app.use(cors(corsOptions));
-
-
+}));
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({
