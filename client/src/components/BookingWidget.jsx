@@ -28,7 +28,7 @@ const BookingWidget = ({ place }) => {
   }
   const today = new Date().toISOString().substring(0, 10);
   const handleBooking = async () => {
-    const response = await axios.post("/bookings", {
+    const response = await axios.post("/api/bookings", {
       checkIn,
       checkOut,
       numberOfGuests,
