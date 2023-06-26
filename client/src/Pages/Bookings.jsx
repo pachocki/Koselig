@@ -11,7 +11,7 @@ const Bookings = () => {
   const [loading,setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("/bookings")
+    axios.get("/api/bookings")
       .then(({ data }) => {
         setBookings(data.bookings);
         setLoading(false);
@@ -21,7 +21,7 @@ const Bookings = () => {
         setLoading(false);
       });
   }, []);
-
+console.log(bookings);
 
 
   return (
