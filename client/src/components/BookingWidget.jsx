@@ -84,7 +84,7 @@ const BookingWidget = ({ place }) => {
                   onChange={(e) => setNumberOfGuests(e.target.value)}
                 />
               </div>
-              {numberOfNights > 0 && (
+              {numberOfNights > 0 && user && (
                 <div className="border my-3 px-2 py-2 rounded-xl overflow-hidden shadow-md">
                   <label className="px-3 font-bold   ">Your full name :</label>
                   <input

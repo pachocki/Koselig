@@ -13,7 +13,7 @@ import Image11 from "../../../assets/hero-check3.webp";
 import Image12 from "../../../assets/hero-check2.webp";
 const AboutDestinations = () => {
   return (
-    <div className="grid grid-cols-[1fr_2fr_1fr] gap-5 py-10 px-5 xl:grid-cols-[1fr_3fr_1fr] md:grid-cols-1 sm:px-2">
+    <div className="grid grid-cols-[1fr_2fr_1fr] gap-10 py-10 px-5 xl:gap-5 xl:grid-cols-[1fr_3fr_1fr] md:grid-cols-1 sm:px-2">
       <div className="flex flex-col justify-between py-2 items-center gap-5">
         <img
           src={Image1}
@@ -50,7 +50,7 @@ const AboutDestinations = () => {
           />
         </div>
         <div className="py-10 md:py-0">
-          <h2 className="text-4xl font-bold  xl:text-3xl sm:text-2xl xs:text-lg pb-10 sm:pb-5">
+          <h2 className="text-4xl font-bold  xl:text-3xl md:text-2xl xs:text-lg pb-10 xl:pb-2">
             Opplev fantastiske naturskjønnhet <br />
             for både actionfylte eventyr og rolige ferier!
           </h2>
@@ -96,7 +96,7 @@ const AboutDestinations = () => {
         <img
           src={Image12}
           alt="destination"
-          className="w-[200px] h-[200px] object-cover self-start md:hidden"
+          className="w-[200px] h-[200px] object-cover lg:w-[150px] lg:h-[150px] self-start md:hidden"
         />
       </div>
     </div>

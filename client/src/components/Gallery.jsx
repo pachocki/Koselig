@@ -1,19 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
-import Images from './Images';
+import Images from "./Images";
 
-const Gallery = ({place}) => {
+const Gallery = ({ place }) => {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
-  const close = ()=>{
+  const close = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    setShowAllPhotos(false)
-  }
+    setShowAllPhotos(false);
+  };
   if (showAllPhotos) {
     return (
-      <div className="absolute inset-0 bg-black/60 text-white min-h-screen min-w-screen m-auto transition-all z-50 h-full sm:fixed sm:overflow-scroll">
-        <div className="bg-black p-8 grid gap-4 sm:overflow-y-hidden">
+      <div className="absolute inset-0 bg-black text-white min-h-screen min-w-screen m-auto transition-all z-50 h-full sm:fixed sm:overflow-scroll">
+        <div className="bg-black p-8 grid gap-4 sm:overflow-y-hidden ">
           <div>
-            <h2 className="text-3xl mr-48 lg:text-2xl sm:text-sm sm:w-1/2">Photos of {place.title}</h2>
+            <h2 className="text-3xl mr-48 lg:text-2xl sm:text-sm sm:w-1/2">
+              Photos of {place.title}
+            </h2>
             <button
               onClick={() => close()}
               className="fixed right-12 top-8 flex gap-1 py-2 px-4 rounded-2xl items-center shadow shadow-black bg-white text-black sm:right-2 sm:px-2 sm:py-1 sm:text-sm"
@@ -40,10 +42,7 @@ const Gallery = ({place}) => {
                 key={photo}
               >
                 <div className="rounded-xl overflow-hidden">
-                  <Images
-                    src={photo}
-                    alt={photo.title}
-                  />
+                  <Images src={photo} alt={photo.title} />
                 </div>
               </div>
             ))}
@@ -54,33 +53,37 @@ const Gallery = ({place}) => {
 
   return (
     <div className="grid gap grid-cols-[2fr_1fr] gap-2 mt-4 rounded-2xl overflow-hidden h-full sm:grid-cols-1 max-h-screen">
-    <div>
-      <Images
-        src={place?.photos?.[0]}
-        alt={place.title}
-        className="w-full h-full lg:h-[70vh] object-cover cursor-pointer sm:h-[50vh]" onClick={()=>setShowAllPhotos(true)}
-      />
+      <div>
+        <Images
+          src={place?.photos?.[0]}
+          alt={place.title}
+          className="w-full h-full lg:h-[70vh] object-cover cursor-pointer sm:h-[50vh]"
+          onClick={() => setShowAllPhotos(true)}
+        />
+      </div>
+      <div className="flex flex-col gap-2 relative sm:hidden ">
+        <Images
+          src={place?.photos?.[1]}
+          alt={place.title}
+          className="w-full h-[50vh] object-cover cursor-pointer"
+          onClick={() => setShowAllPhotos(true)}
+        />
+        <Images
+          src={place?.photos?.[2]}
+          alt={place.title}
+          className="w-full h-1/2 object-cover cursor-pointer"
+          onClick={() => setShowAllPhotos(true)}
+        />
+        <button
+          className="bg-gray-200 absolute bottom-3 right-5 px-3 py-1 rounded-xl  font-medium shadow-xl flex gap-2 items-center"
+          onClick={() => setShowAllPhotos(true)}
+        >
+          <BsFillGrid3X3GapFill />
+          Vis alle bildene
+        </button>
+      </div>
     </div>
-    <div className="flex flex-col gap-2 relative sm:hidden ">
-      <Images
-        src={place?.photos?.[1]}
-        alt={place.title}
-        className="w-full h-[50vh] object-cover cursor-pointer" onClick={()=>setShowAllPhotos(true)}
-      />
-      <Images
-        src={place?.photos?.[2]}
-        alt={place.title}
-        className="w-full h-1/2 object-cover cursor-pointer" onClick={()=>setShowAllPhotos(true)}
-      />
-      <button
-        className="bg-gray-200 absolute bottom-3 right-5 px-3 py-1 rounded-xl  font-medium shadow-xl flex gap-2 items-center"
-        onClick={() => setShowAllPhotos(true)}>
-        <BsFillGrid3X3GapFill />
-        Vis alle bildene
-      </button>
-    </div>
-  </div>
-  )
-}
+  );
+};
 
-export default Gallery
+export default Gallery;
