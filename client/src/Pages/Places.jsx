@@ -8,6 +8,7 @@ import Images from "../components/Images";
 const Places = () => {
   const [places, setPlaces] = useState();
   useEffect(() => {
+    //Fetching user places
     axios.get("/user-places").then(({ data }) => {
       setPlaces(data);
     });

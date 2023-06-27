@@ -11,6 +11,7 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
 
   if (showMenu) {
+    // Render full screen menu overlay
     return (
       <div className="fixed right-0 top-0 bg-black/60  w-full  min-h-screen min-w-screen m-auto transition-all   z-50  sm:fixed sm:overflow-scroll h-screen">
         <div className="rounded-l-xl bg-white w-2/3 right-0 p-8 grid gap-4 sm:overflow-y-hidden h-screen absolute transition-all sm:w-full sm:rounded-none">
@@ -123,6 +124,8 @@ const Header = () => {
       </div>
     );
   }
+
+   // Render regular header
   return (
     <div>
       <header className="flex justify-between items-center h-24 px-2 bg-gray-50  text-2xl border-y-2 border-black font-semibold fixed inset-0 w-full mx-auto realtive z-40 lg:h-20">

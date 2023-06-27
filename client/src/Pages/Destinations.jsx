@@ -10,6 +10,7 @@ const Destinations = () => {
   const [loading, setLoading] = useState(true);
  
   useEffect(() => {
+    // Fetch places data from the server
     axios.get("/places").then((response) => {
       setPlaces([
         ...response.data,

@@ -26,6 +26,7 @@ const PlacesForm = () => {
     if (!id) {
       return;
     }
+    // Fetch existing place data from the server
     axios.get(/places/ + id).then((response) => {
       const { data } = response;
       setTitle(data.title);
@@ -42,6 +43,7 @@ const PlacesForm = () => {
   }, [id]);
 
   const addPhotoByLink = async (e) => {
+    // Upload photo by link and add it to the addedPhotos array
     e.preventDefault();
     const { data: filename } = await axios.post("/upload-by-link", {
       link: photoLink,
@@ -52,6 +54,7 @@ const PlacesForm = () => {
     setPhotoLink("");
   };
   const uploadPhoto = async (e) => {
+    // Upload photos using FormData and add them to the addedPhotos array
     e.preventDefault();
     const files = e.target.files;
     const data = new FormData();
@@ -110,14 +113,17 @@ const PlacesForm = () => {
   }
   function removePhoto(ev, filename) {
     ev.preventDefault();
-    setAddedPhotos(prev => prev.filter(photo => photo !== filename));
+    setAddedPhotos((prev) => prev.filter((photo) => photo !== filename));
   }
 
   return (
     <div className="pt-28 px-2">
       <AccountNavigation />
       <div className="flex justify-center py-10 ">
-        <form className="flex flex-col gap-3  mx-auto w-4/5 md:w-[98%] sm:w-full" onSubmit={savePlace}>
+        <form
+          className="flex flex-col gap-3  mx-auto w-4/5 md:w-[98%] sm:w-full"
+          onSubmit={savePlace}
+        >
           <label className="text-gray-600 font-medium pl-2 text-xl sm:text-lg">
             Title:
           </label>

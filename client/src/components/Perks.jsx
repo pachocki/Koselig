@@ -9,11 +9,14 @@ import {
 } from "react-icons/fa";
 
 const Perks = ({ selected, onChange }) => {
+  // Function to handle checkbox click event
   const handleCbClick = (e) => {
     const { checked, name } = e.target;
     if (checked) {
+      // If checkbox is checked, add the selected perk to the array
       onChange([...selected, name]);
     } else {
+      // If checkbox is unchecked, remove the selected perk from the array
       onChange([...selected.filter((selectedName) => selectedName !== name)]);
     }
   };

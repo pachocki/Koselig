@@ -8,6 +8,8 @@ const BookingsDate = ({ booking }) => {
   useEffect(() => {
     const currentDate = new Date();
     const checkOutDate = new Date(booking.checkOut);
+
+    // Check if current date is after the check-out date
     if (currentDate > checkOutDate) {
       setShowBooking(false);
     }
@@ -37,13 +39,13 @@ const BookingsDate = ({ booking }) => {
 
       <div>
         <p>
-        Antall netter:
+          Antall netter:{" "}
           {differenceInCalendarDays(
             new Date(booking.checkOut),
             new Date(booking.checkIn)
           )}
         </p>
-        <p>Total pris : {booking.place.price}Nok</p>
+        <p>Total pris: {booking.place.price}Nok</p>
       </div>
     </div>
   );

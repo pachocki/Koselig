@@ -9,6 +9,7 @@ const Gallery = ({ place }) => {
     setShowAllPhotos(false);
   };
   if (showAllPhotos) {
+    // Render full-screen gallery view
     return (
       <div className="absolute inset-0 bg-black text-white min-h-screen min-w-screen m-auto transition-all z-50 h-full sm:fixed sm:overflow-scroll">
         <div className="bg-black p-8 grid gap-4 sm:overflow-y-hidden ">
@@ -50,7 +51,7 @@ const Gallery = ({ place }) => {
       </div>
     );
   }
-
+// Render grid gallery view
   return (
     <div className="grid gap grid-cols-[2fr_1fr] gap-2 mt-4 rounded-2xl overflow-hidden h-full sm:grid-cols-1 max-h-screen">
       <div>

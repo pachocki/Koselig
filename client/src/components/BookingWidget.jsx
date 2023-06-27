@@ -12,8 +12,9 @@ const BookingWidget = ({ place }) => {
   const [redirect, setRedirect] = useState("");
   const [numberOfGuests, setNumberOfGuests] = useState(1);
   const { user } = useContext(UserContext);
- 
+
   useEffect(() => {
+    // Set the name value to the user's name if available
     if (user) {
       setName(user.name);
     }
@@ -21,12 +22,15 @@ const BookingWidget = ({ place }) => {
 
   let numberOfNights = 0;
   if (checkIn && checkOut) {
+    // Calculate the number of nights based on check-in and check-out dates
     numberOfNights = differenceInCalendarDays(
       new Date(checkOut),
       new Date(checkIn)
     );
   }
+
   const today = new Date().toISOString().substring(0, 10);
+
   const handleBooking = async () => {
     const response = await axios.post("/bookings", {
       checkIn,
@@ -44,6 +48,7 @@ const BookingWidget = ({ place }) => {
   if (redirect) {
     return <Navigate to={redirect} />;
   }
+  
   return (
     <div className="flex w-2/5  bg-stone-200 rounded-xl xl:w-1/3 sm:w-full xs:bg-gray-50 lg:w-2/5 pb-5">
       <div className=" mx-auto  px-3   xl:w-full xl:px-2 sm:h-full xs:px-0">
